@@ -1,11 +1,17 @@
 # TawanaSSL-AutoWildcard
+
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Shell Script](https://img.shields.io/badge/language-Bash-blue)
 ![Cloudflare](https://img.shields.io/badge/DNS-Cloudflare-orange)
+
+![screenshot][photo_2025-11-17_02-27-32](https://github.com/user-attachments/assets/22d05b31-8d20-4345-bc2f-6047b9684f73)
+
+
 **Automated Wildcard SSL Installer for Marzban, Marzneshin & Custom Linux Servers (Cloudflare + acme.sh + Let’s Encrypt)**
 
-🔗 **Repository:** [https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard](https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard)
-🌐 **Author Website:** [https://tawana.online](https://tawana.online)
+🔗 **Repository:** https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard  
+🌐 **Author Website:** https://tawana.online
+
 
 
 TawanaSSL-AutoWildcard is a simple, interactive Bash script that automates issuing and installing **Let’s Encrypt wildcard SSL certificates** using **Cloudflare DNS**, designed especially for **Marzban**, **Marzneshin**, and any **custom HTTPS server setup**.
