@@ -4,10 +4,10 @@
 ![Shell Script](https://img.shields.io/badge/language-Bash-blue)
 ![Cloudflare](https://img.shields.io/badge/DNS-Cloudflare-orange)
 
-![screenshot][photo_2025-11-17_02-27-32](https://github.com/user-attachments/assets/22d05b31-8d20-4345-bc2f-6047b9684f73)
-
+![Screenshot](https://github.com/user-attachments/assets/60a2a106-3c0e-49ec-8ac7-7ce0348ce765)
 
 **Automated Wildcard SSL Installer for Marzban, Marzneshin & Custom Linux Servers (Cloudflare + acme.sh + Let’s Encrypt)**
+
 
 🔗 **Repository:** https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard  
 🌐 **Author Website:** https://tawana.online
