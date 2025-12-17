@@ -21,6 +21,28 @@ press_enter() {
   read -rp "Press Enter to continue..."
 }
 
+update_panel_env() {
+  local env_path=$1
+  local cert_path=$2
+  local key_path=$3
+  if [[ -f "$env_path" ]]; then
+    yellow "Updating configuration at $env_path..."
+    # Update or add UVICORN_SSL_CERTFILE
+    if grep -q "UVICORN_SSL_CERTFILE" "$env_path"; then
+      sed -i "s|^#*\s*UVICORN_SSL_CERTFILE.*|UVICORN_SSL_CERTFILE = \"$cert_path\"|" "$env_path"
+    else
+      echo "UVICORN_SSL_CERTFILE = \"$cert_path\"" >> "$env_path"
+    fi
+    # Update or add UVICORN_SSL_KEYFILE
+    if grep -q "UVICORN_SSL_KEYFILE" "$env_path"; then
+      sed -i "s|^#*\s*UVICORN_SSL_KEYFILE.*|UVICORN_SSL_KEYFILE = \"$key_path\"|" "$env_path"
+    else
+      echo "UVICORN_SSL_KEYFILE = \"$key_path\"" >> "$env_path"
+    fi
+    green "Environment file $env_path updated."
+  fi
+}
+
 # ========================
 #      Script Start
 # ========================
@@ -81,10 +103,11 @@ echo "[Step 3/6] Certificate install path & service reload"
 echo "Select certificate installation path:"
 echo "  1) Marzban      (/var/lib/marzban/certs)"
 echo "  2) Marzneshin   (/var/lib/marzneshin/certs)"
-echo "  3) Custom Path"
+echo "  3) Pasargad     (/var/lib/pasarguard/certs)"
+echo "  4) Custom Path"
 echo
 
-read -rp "Choose (1/2/3): " PATH_CHOICE
+read -rp "Choose (1/2/3/4): " PATH_CHOICE
 echo
 
 RELOAD_CMD="systemctl reload nginx || true"
@@ -93,13 +116,21 @@ case "$PATH_CHOICE" in
   1)
     TARGET_DIR="/var/lib/marzban/certs"
     RELOAD_CMD="$RELOAD_CMD; (systemctl restart marzban || systemctl restart marzban.service || true)"
+    ENV_FILE="/opt/marzban/.env"
     ;;
   2)
     TARGET_DIR="/var/lib/marzneshin/certs"
     RELOAD_CMD="$RELOAD_CMD; (systemctl restart marzneshin || systemctl restart marzneshin.service || true)"
+    ENV_FILE=""
     ;;
   3)
+    TARGET_DIR="/var/lib/pasarguard/certs"
+    RELOAD_CMD="$RELOAD_CMD; (systemctl restart pasarguard || systemctl restart pasarguard.service || true)"
+    ENV_FILE="/opt/pasarguard/.env"
+    ;;
+  4)
     read -rp "Enter full certificate directory path (e.g. /etc/nginx/ssl): " TARGET_DIR
+    ENV_FILE=""
     ;;
   *)
     red "ERROR: Invalid choice."
@@ -114,6 +145,10 @@ fi
 
 yellow "Selected certificate directory: $TARGET_DIR"
 mkdir -p "$TARGET_DIR"
+
+if [[ -n "$ENV_FILE" ]]; then
+  update_panel_env "$ENV_FILE" "$TARGET_DIR/fullchain.pem" "$TARGET_DIR/key.pem"
+fi
 
 echo
 yellow "Service reload command will be:"
@@ -224,7 +259,7 @@ echo
 clear
 echo
 blue  "==================================================="
-blue  "         TawanaSSL Wildcard Setup Summary"
+blue  "         TawanaSSL Setup Completed! 🎉"
 blue  "==================================================="
 echo
 green " Status:           SUCCESS ✅"
@@ -232,24 +267,20 @@ echo
 echo  " Domain:           $DOMAIN"
 echo  " Wildcard:         *.$DOMAIN"
 echo  " Certificate path: $TARGET_DIR"
-echo  " Files used:       fullchain.pem (certificate)"
-echo  "                   key.pem       (private key)"
 echo
-echo  " Services reload command executed:"
+if [[ -n "$ENV_FILE" ]]; then
+  echo  " Configuration:    Updated $ENV_FILE with SSL paths."
+fi
+echo
+echo  " The panel and web server were restarted automatically."
+echo  " If you ever need to restart manually, use:"
 echo  "   $RELOAD_CMD"
 echo
 echo  " Useful test commands:"
-echo
 echo  "   # Check certificate from this server"
 echo  "   echo | openssl s_client -connect ${DOMAIN}:443 -servername ${DOMAIN} 2>/dev/null | openssl x509 -noout -dates -issuer -subject"
 echo
-echo  "   # Example Marzban subdomain (edit if needed):"
-echo  "   echo | openssl s_client -connect panel.${DOMAIN}:443 -servername panel.${DOMAIN} 2>/dev/null | openssl x509 -noout -dates -issuer -subject"
+echo  " acme.sh auto-renew cron is installed. No more manual work!"
+green "Done. Your server is now secure. 🔐"
 echo
-echo  " acme.sh auto-renew cron is installed by default."
-echo  " Certificates will be renewed automatically, and this"
-echo  " script ensures they are copied to the correct path and"
-echo  " selected services are reloaded."
-echo
-green "Done. Have a secure day. 🔐"
-echo
+```

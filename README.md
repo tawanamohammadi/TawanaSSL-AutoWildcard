@@ -12,7 +12,7 @@
 
 ---
 
-### **Automated Wildcard SSL Installer for Marzban, Marzneshin & Custom Linux Servers**  
+### **Automated Wildcard SSL Installer for Marzban, Marzneshin, Pasargad & Custom Linux Servers**  
 Using **Cloudflare DNS + acme.sh + Let’s Encrypt**
 
 
@@ -21,16 +21,16 @@ Using **Cloudflare DNS + acme.sh + Let’s Encrypt**
 
 
 
-TawanaSSL-AutoWildcard is a simple, interactive Bash script that automates issuing and installing **Let’s Encrypt wildcard SSL certificates** using **Cloudflare DNS**, designed especially for **Marzban**, **Marzneshin**, and any **custom HTTPS server setup**.
+TawanaSSL-AutoWildcard is a simple, interactive Bash script that automates issuing and installing **Let’s Encrypt wildcard SSL certificates** using **Cloudflare DNS**, designed especially for **Marzban**, **Marzneshin**, **Pasargad**, and any **custom HTTPS server setup**.
 
 It handles everything for you:
 
 * Installs **acme.sh** (if missing)
 * Issues wildcard SSL for `domain` and `*.domain`
 * Uses **Cloudflare DNS-01 challenge** (no HTTP challenge needed)
-* Installs certs into Marzban / Marzneshin / custom paths
+* Installs certs into Marzban / Marzneshin / Pasargad / custom paths
 * Backs up old certificates safely
-* Reloads Nginx and restarts Marzban / Marzneshin
+* Reloads Nginx and restarts Marzban / Marzneshin / Pasargad
 * Works with **auto-renewal** via acme.sh cron
 
 ---
@@ -57,12 +57,13 @@ It handles everything for you:
   * Uses Let’s Encrypt as default CA
   * Ensures certificates are renewed and reinstalled automatically
 
-* ✅ **Marzban & Marzneshin Friendly**
+* ✅ **Marzban, Marzneshin & Pasargad Friendly**
 
   * Built-in support for:
 
     * `/var/lib/marzban/certs`
     * `/var/lib/marzneshin/certs`
+    * `/var/lib/pasarguard/certs`
   * Option for **custom certificate paths** (e.g. `/etc/nginx/ssl`)
 
 * ✅ **Service Reload & Restart**
@@ -72,6 +73,7 @@ It handles everything for you:
 
     * `marzban` / `marzban.service`
     * `marzneshin` / `marzneshin.service`
+    * `pasarguard` / `pasarguard.service`
 
 * ✅ **Backup & Safety**
 
@@ -92,6 +94,7 @@ It handles everything for you:
 
 * Securing **Marzban panel** and proxy infrastructures
 * Securing **Marzneshin** deployments
+* Securing **Pasargad** infrastructures
 * Deploying **wildcard HTTPS** for multiple subdomains
 * Automated SSL for:
 
@@ -177,7 +180,8 @@ You choose where the certificate should be installed:
 
 * `1` → **Marzban** → `/var/lib/marzban/certs`
 * `2` → **Marzneshin** → `/var/lib/marzneshin/certs`
-* `3` → **Custom path** (you specify directory path)
+* `3` → **Pasargad** → `/var/lib/pasarguard/certs`
+* `4` → **Custom path** (you specify directory path)
 
 The script then configures a **reload command** such as:
 
@@ -215,7 +219,7 @@ If anything fails, you’ll see:
 
   * `fullchain.pem` → certificate
   * `key.pem` → private key
-* Executes the reload command (e.g. reloads Nginx, restarts Marzban/Marzneshin)
+* Executes the reload command (e.g. reloads Nginx, restarts Marzban/Marzneshin/Pasargad)
 
 Finally, you get a **summary screen** with:
 
@@ -297,6 +301,7 @@ This project is relevant for:
 * `acme.sh cloudflare dns wildcard`
 * `letsencrypt wildcard certificate automation`
 * `ubuntu marzban https setup`
+* `pasargad ssl automation`
 * `vpn panel ssl automation`
 
 If you searched for any of those, you’re in the right place.
