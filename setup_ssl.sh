@@ -1,5 +1,8 @@
-#!/usr/bin/env bash
-set -euo pipefail
+# ========================
+#   Global Variables
+# ========================
+LANG="en" # Default
+HAS_PYTHON_BIDI=false
 
 # ========================
 #   Helper Functions
@@ -9,6 +12,28 @@ red()   { echo -e "\e[31m$*\e[0m"; }
 green() { echo -e "\e[32m$*\e[0m"; }
 yellow(){ echo -e "\e[33m$*\e[0m"; }
 blue()  { echo -e "\e[34m$*\e[0m"; }
+cyan()  { echo -e "\e[36m$*\e[0m"; }
+bold()  { echo -e "\e[1m$*\e[0m"; }
+
+# Multi-language print function
+msg() {
+  local en_msg=$1
+  local fa_msg=$2
+  local color=${3:-""}
+  
+  if [[ "$LANG" == "fa" ]]; then
+    # Use python for shaping if available, else fribidi, else raw
+    if [[ "$HAS_PYTHON_BIDI" == true ]]; then
+      python3 -c "import arabic_reshaper; from bidi.algorithm import get_display; print(get_display(arabic_reshaper.reshape('$fa_msg')))" 2>/dev/null || echo "$fa_msg" | fribidi --charset UTF-8
+    elif command -v fribidi >/dev/null 2>&1; then
+      echo -e "$color" "$(echo "$fa_msg" | fribidi --charset UTF-8)" "\e[0m"
+    else
+      echo -e "$color$fa_msg\e[0m"
+    fi
+  else
+    echo -e "$color$en_msg\e[0m"
+  fi
+}
 
 require_root() {
   if [[ "$EUID" -ne 0 ]]; then
@@ -18,7 +43,21 @@ require_root() {
 }
 
 press_enter() {
-  read -rp "Press Enter to continue..."
+  if [[ "$LANG" == "fa" ]]; then
+    read -rp "$(msg "Press Enter to continue..." "برای ادامه اینتر بزنید...") "
+  else
+    read -rp "Press Enter to continue..."
+  fi
+}
+
+install_fa_deps() {
+  yellow "Checking Persian display dependencies..."
+  apt-get update -qq
+  apt-get install -y libfribidi-bin python3-pip -qq
+  pip3 install arabic-reshaper python-bidi --quiet 2>/dev/null || true
+  if python3 -c "import arabic_reshaper, bidi" >/dev/null 2>&1; then
+    HAS_PYTHON_BIDI=true
+  fi
 }
 
 update_panel_env() {
@@ -50,68 +89,92 @@ update_panel_env() {
 require_root
 
 clear
+echo -e "\e[1;36m"
+echo "  ████████╗ █████╗ ██╗    ██╗ █████╗ ███╗   ██╗ █████╗     ███████╗███████╗██╗"
+echo "  ╚══██╔══╝██╔══██╗██║    ██║██╔══██╗████╗  ██║██╔══██╗    ██╔════╝██╔════╝██║"
+echo "     ██║   ███████║██║ █╗ ██║███████║██╔██╗ ██║███████║    ███████╗███████╗██║"
+echo "     ██║   ██╔══██║██║███╗██║██╔══██║██║╚██╗██║██╔══██║    ╚════██║╚════██║██║"
+echo "     ██║   ██║  ██║╚███╔███╔╝██║  ██║██║ ╚████║██║  ██║    ███████║███████║███████╗"
+echo "     ╚═╝   ╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝    ╚══════╝╚══════╝╚══════╝"
+echo -e "\e[0m"
+bold "  =============================================================================="
+bold "                   TawanaSSL Auto Wildcard Elite Installer"
+bold "  =============================================================================="
 echo
-blue  "==================================================="
-blue  "           TawanaSSL Auto Wildcard Tool"
-blue  "==================================================="
-echo  " Automated wildcard SSL for Marzban / Marzneshin / Custom"
-echo  " Using: acme.sh  +  Cloudflare DNS  +  Let's Encrypt"
-echo  " Repo : https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard"
+
+# Language Selection
+echo "  Select Language / انتخاب زبان:"
+echo "  1) English"
+echo "  2) فارسی (Persian)"
 echo
+read -rp "  Choice (1/2): " LANG_CHOICE
+if [[ "$LANG_CHOICE" == "2" ]]; then
+  LANG="fa"
+  install_fa_deps
+fi
+
+clear
+echo -e "\e[1;36m"
+echo "  ████████╗ █████╗ ██╗    ██╗ █████╗ ███╗   ██╗ █████╗     ███████╗███████╗██╗"
+echo "  ╚══██╔══╝██╔══██╗██║    ██║██╔══██╗████╗  ██║██╔══██╗    ██╔════╝██╔════╝██║"
+echo "     ██║   ███████║██║ █╗ ██║███████║██╔██╗ ██║███████║    ███████╗███████╗██║"
+echo "     ██║   ██╔══██║██║███╗██║██╔══██║██║╚██╗██║██╔══██║    ╚════██║╚════██║██║"
+echo "     ██║   ██║  ██║╚███╔███╔╝██║  ██║██║ ╚████║██║  ██║    ███████║███████║███████╗"
+echo "     ╚═╝   ╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝    ╚══════╝╚══════╝╚══════╝"
+echo -e "\e[0m"
+bold "  =============================================================================="
+msg "  Automated Wildcard SSL for Marzban / Marzneshin / Pasargad / X-UI" "صدور خودکار گواهینامه وایلدکارد برای مرزبان، مرزنشین، پاسارگاد و ایکس-یوآی" "\e[1m"
+msg "  Using: acme.sh + Cloudflare + Let's Encrypt" "با استفاده از: acme.sh + کلودفلر + لتس انکریپت"
+msg "  Repo : https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard" "گیت‌هاب: https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard"
+bold "  =============================================================================="
 echo
 
 # ---- Step 1: Get Cloudflare credentials ----
-echo "[Step 1/6] Cloudflare credentials"
-read -rp "Enter your Cloudflare Email: " CF_Email
+msg "[Step 1/6] Cloudflare credentials" "[مرحله ۱/۶] اطلاعات کلودفلر" "\e[33m"
+read -rp "$(msg "Enter your Cloudflare Email: " "ایمیل کلودفلر خود را وارد کنید: ") " CF_Email
 if [[ -z "$CF_Email" ]]; then
-  red "ERROR: Cloudflare Email cannot be empty."
+  msg "ERROR: Cloudflare Email cannot be empty." "خطا: ایمیل کلودفلر نمی‌تواند خالی باشد." "\e[31m"
   exit 1
 fi
 
-read -rsp "Enter your Cloudflare Global API Key: " CF_Key
+read -rsp "$(msg "Enter your Cloudflare Global API Key: " "کلید API کلودفلر را وارد کنید: ") " CF_Key
 echo
 if [[ -z "$CF_Key" ]]; then
-  red "ERROR: Cloudflare Global API Key cannot be empty."
+  msg "ERROR: Cloudflare Global API Key cannot be empty." "خطا: کلید API کلودفلر نمی‌تواند خالی باشد." "\e[31m"
   exit 1
 fi
 echo
 
 # ---- Step 2: Get domain ----
-echo "[Step 2/6] Domain configuration"
-read -rp "Enter your main domain (example: panbehpanel.ir): " DOMAIN
+msg "[Step 2/6] Domain configuration" "[مرحله ۲/۶] تنظیم دامنه" "\e[33m"
+read -rp "$(msg "Enter your main domain (example: panbehpanel.ir): " "دامنه اصلی خود را وارد کنید (مثال: example.com): ") " DOMAIN
 
 if [[ -z "$DOMAIN" ]]; then
-  red "ERROR: Domain cannot be empty."
+  msg "ERROR: Domain cannot be empty." "خطا: دامنه نمی‌تواند خالی باشد." "\e[31m"
   exit 1
 fi
 
-# Very basic validation
-if [[ ! "$DOMAIN" =~ ^[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
-  yellow "WARNING: Domain format looks unusual. Make sure it is correct."
-fi
-
 echo
-yellow "Important:"
-echo "  - The domain MUST exist in your Cloudflare account."
-echo "  - The domain's nameservers MUST point to Cloudflare."
-echo "  - Ensure you have an A record pointing your domain/subdomain to this server."
-echo "  - Magic: This script issues a Wildcard SSL (*.domain), meaning"
-echo "    ALL your subdomains will be secured with this single certificate!"
+msg "Important:" "نکات حیاتی:" "\e[1;33m"
+msg "  - The domain MUST exist in your Cloudflare account." "  - دامنه حتما باید در اکانت کلودفلر شما ثبت شده باشد."
+msg "  - The domain's nameservers MUST point to Cloudflare." "  - نیم‌سرورهای دامنه باید به کلودفلر متصل باشند."
+msg "  - Ensure you have an A record pointing your domain to this server." "  - حتما یک رکورد A برای اتصال دامنه به آی‌پی این سرور بسازید."
+msg "  - Magic: This issues a Wildcard SSL (*.domain) for ALL subdomains!" "  - جادو: این اسکریپت تمام ساب‌دامین‌های شما را یکجا امن می‌کند!"
 echo
 press_enter
 
 # ---- Step 3: Choose certificate path & reload behavior ----
 echo
-echo "[Step 3/6] Certificate install path & service reload"
-echo "Select certificate installation path:"
+msg "[Step 3/6] Certificate install path & service reload" "[مرحله ۳/۶] مسیر نصب و بازنشانی سرویس‌ها" "\e[33m"
+msg "Select certificate installation path:" "مسیر نصب گواهینامه را انتخاب کنید:"
 echo "  1) Marzban      (/var/lib/marzban/certs)"
 echo "  2) Marzneshin   (/var/lib/marzneshin/certs)"
 echo "  3) Pasargad     (/var/lib/pasarguard/certs)"
 echo "  4) 3X-UI / X-UI (/etc/x-ui/certs)"
-echo "  5) Custom Path"
+msg "  5) Custom Path" "  ۵) مسیر سفارشی"
 echo
 
-read -rp "Choose (1/2/3/4/5): " PATH_CHOICE
+read -rp "$(msg "Choose (1/2/3/4/5): " "انتخاب کنید (۱/۲/۳/۴/۵): ") " PATH_CHOICE
 echo
 
 RELOAD_CMD="systemctl reload nginx || true"
@@ -138,21 +201,21 @@ case "$PATH_CHOICE" in
     ENV_FILE=""
     ;;
   5)
-    read -rp "Enter full certificate directory path (e.g. /etc/nginx/ssl): " TARGET_DIR
+    read -rp "$(msg "Enter full certificate directory path: " "مسیر کامل دایرکتوری گواهینامه را وارد کنید: ") " TARGET_DIR
     ENV_FILE=""
     ;;
   *)
-    red "ERROR: Invalid choice."
+    msg "ERROR: Invalid choice." "خطا: انتخاب نامعتبر." "\e[31m"
     exit 1
     ;;
 esac
 
 if [[ -z "$TARGET_DIR" ]]; then
-  red "ERROR: Target directory cannot be empty."
+  msg "ERROR: Target directory cannot be empty." "خطا: مسیر هدف نمی‌تواند خالی باشد." "\e[31m"
   exit 1
 fi
 
-yellow "Selected certificate directory: $TARGET_DIR"
+msg "Selected certificate directory: $TARGET_DIR" "مسیر انتخاب شده: $TARGET_DIR" "\e[33m"
 mkdir -p "$TARGET_DIR"
 
 if [[ -n "$ENV_FILE" ]]; then
@@ -160,7 +223,7 @@ if [[ -n "$ENV_FILE" ]]; then
 fi
 
 echo
-yellow "Service reload command will be:"
+msg "Service reload command will be:" "دستور بازنشانی سرویس‌ها:" "\e[33m"
 echo "  $RELOAD_CMD"
 echo
 press_enter
@@ -170,27 +233,26 @@ press_enter
 # ========================
 
 echo
-echo "[Step 4/6] Checking acme.sh installation"
+msg "[Step 4/6] Checking acme.sh installation" "[مرحله ۴/۶] بررسی نصب acme.sh" "\e[33m"
 
 ACME_SH="/root/.acme.sh/acme.sh"
 
 if [[ ! -x "$ACME_SH" ]]; then
-  yellow "acme.sh not found. Installing..."
+  msg "acme.sh not found. Installing..." "ابزار acme.sh یافت نشد. در حال نصب..." "\e[33m"
   curl https://get.acme.sh | sh
   ACME_SH="/root/.acme.sh/acme.sh"
   if [[ ! -x "$ACME_SH" ]]; then
-    red "ERROR: acme.sh installation failed."
+    msg "ERROR: acme.sh installation failed." "خطا: نصب acme.sh با شکست مواجه شد." "\e[31m"
     exit 1
   fi
-  green "acme.sh installed successfully."
+  msg "acme.sh installed successfully." "نصب acme.sh با موفقیت انجام شد." "\e[32m"
 else
-  green "acme.sh is already installed."
+  msg "acme.sh is already installed." "ابزار acme.sh قبلاً نصب شده است." "\e[32m"
 fi
 
-# Set Let's Encrypt as default CA
-yellow "Setting Let's Encrypt as default CA..."
+msg "Setting Let's Encrypt as default CA..." "تنظیم Let's Encrypt به عنوان مرجع صدور..." "\e[33m"
 "$ACME_SH" --set-default-ca --server letsencrypt
-green "Default CA set to Let's Encrypt."
+msg "Default CA set to Let's Encrypt." "مرجع صدور با موفقیت تنظیم شد." "\e[32m"
 echo
 
 # Set Cloudflare env vars
@@ -201,8 +263,8 @@ export CF_Key
 #   Step 5: Issue wildcard cert
 # ========================
 
-echo "[Step 5/6] Requesting wildcard SSL certificate"
-yellow "Requesting wildcard SSL for:"
+msg "[Step 5/6] Requesting wildcard SSL certificate" "[مرحله ۵/۶] درخواست گواهینامه SSL" "\e[33m"
+msg "Requesting wildcard SSL for:" "در حال درخواست گواهینامه برای:" "\e[33m"
 echo "  - $DOMAIN"
 echo "  - *.$DOMAIN"
 echo
@@ -213,52 +275,41 @@ if ! "$ACME_SH" --issue \
   -d "*.$DOMAIN" \
   --keylength ec-256; then
 
-  red "ERROR: Failed to issue wildcard certificate."
-  echo
-  yellow "Common reasons:"
-  echo "  - The domain is NOT in your Cloudflare account."
-  echo "  - The nameservers are NOT pointing to Cloudflare."
-  echo "  - Cloudflare Email or Global API Key is incorrect."
-  echo
-  yellow "You can re-run the script after fixing the configuration."
+  msg "ERROR: Failed to issue wildcard certificate." "خطا: صدور گواهینامه با شکست مواجه شد." "\e[31m"
   exit 1
 fi
 
-green "Wildcard certificate successfully issued."
+msg "Wildcard certificate successfully issued." "گواهینامه با موفقیت صادر شد." "\e[32m"
 echo
 
 # ========================
 #   Step 6: Install cert
 # ========================
 
-echo "[Step 6/6] Installing certificate to target directory"
+msg "[Step 6/6] Installing certificate to target directory" "[مرحله ۶/۶] نصب گواهینامه در مسیر هدف" "\e[33m"
 
 TIMESTAMP=$(date +"%Y-%m-%d-%H%M%S")
 
 # Backup old certs if they exist
 if [[ -f "$TARGET_DIR/fullchain.pem" ]]; then
   cp "$TARGET_DIR/fullchain.pem" "$TARGET_DIR/fullchain.pem.bak-$TIMESTAMP"
-  yellow "Backup created: $TARGET_DIR/fullchain.pem.bak-$TIMESTAMP"
 fi
 
 if [[ -f "$TARGET_DIR/key.pem" ]]; then
   cp "$TARGET_DIR/key.pem" "$TARGET_DIR/key.pem.bak-$TIMESTAMP"
-  yellow "Backup created: $TARGET_DIR/key.pem.bak-$TIMESTAMP"
 fi
 
-yellow "Installing new certificate and key..."
+msg "Installing new certificate and key..." "در حال نصب گواهینامه و کلید جدید..." "\e[33m"
 if ! "$ACME_SH" --install-cert -d "$DOMAIN" --ecc \
   --key-file "$TARGET_DIR/key.pem" \
   --fullchain-file "$TARGET_DIR/fullchain.pem" \
   --reloadcmd "$RELOAD_CMD"; then
 
-  red "ERROR: Failed to install certificate."
-  echo "Check that the target directory exists and is writable:"
-  echo "  $TARGET_DIR"
+  msg "ERROR: Failed to install certificate." "خطا: نصب گواهینامه با شکست مواجه شد." "\e[31m"
   exit 1
 fi
 
-green "Certificate installed and services reload command executed."
+msg "Certificate installed and services reload command executed." "گواهینامه نصب و سرویس‌ها ری‌استارت شدند." "\e[32m"
 echo
 
 # ========================
@@ -266,30 +317,32 @@ echo
 # ========================
 
 clear
+echo -e "\e[1;36m"
+echo "  ████████╗ █████╗ ██╗    ██╗ █████╗ ███╗   ██╗ █████╗     ███████╗███████╗██╗"
+echo "  ╚══██╔══╝██╔══██╗██║    ██║██╔══██╗████╗  ██║██╔══██╗    ██╔════╝██╔════╝██║"
+echo "     ██║   ███████║██║ █╗ ██║███████║██╔██╗ ██║███████║    ███████╗███████╗██║"
+echo "     ██║   ██╔══██║██║███╗██║██╔══██║██║╚██╗██║██╔══██║    ╚════██║╚════██║██║"
+echo "     ██║   ██║  ██║╚███╔███╔╝██║  ██║██║ ╚████║██║  ██║    ███████║███████║███████╗"
+echo "     ╚═╝   ╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝    ╚══════╝╚══════╝╚══════╝"
+echo -e "\e[0m"
+bold "  =============================================================================="
+msg "                   TawanaSSL Setup Completed! ✅" "عملیات با موفقیت به پایان رسید! ✅" "\e[1;32m"
+bold "  =============================================================================="
 echo
-blue  "==================================================="
-blue  "         TawanaSSL Setup Completed! 🎉"
-blue  "==================================================="
+msg " Status:           SUCCESS ✅" " وضعیت:           موفقیت‌آمیز ✅"
 echo
-green " Status:           SUCCESS ✅"
-echo
-echo  " Domain:           $DOMAIN"
-echo  " Wildcard:         *.$DOMAIN"
-echo  " Certificate path: $TARGET_DIR"
+msg " Domain:           $DOMAIN" " دامنه:           $DOMAIN"
+msg " Wildcard:         *.$DOMAIN" " وایلدکارد:         *.$DOMAIN"
+msg " Certificate path: $TARGET_DIR" " مسیر گواهینامه: $TARGET_DIR"
 echo
 if [[ -n "$ENV_FILE" ]]; then
-  echo  " Configuration:    Updated $ENV_FILE with SSL paths."
+  msg " Configuration:    Updated $ENV_FILE" " تنظیمات:    فایل $ENV_FILE بروزرسانی شد"
 fi
 echo
-echo  " The panel and web server were restarted automatically."
-echo  " If you ever need to restart manually, use:"
-echo  "   $RELOAD_CMD"
+msg " Useful test command:" " دستور تست پیشنهادی:" "\e[33m"
+echo "   echo | openssl s_client -connect ${DOMAIN}:443 -servername ${DOMAIN} 2>/dev/null | openssl x509 -noout -dates"
 echo
-echo  " Useful test commands:"
-echo  "   # Check certificate from this server"
-echo  "   echo | openssl s_client -connect ${DOMAIN}:443 -servername ${DOMAIN} 2>/dev/null | openssl x509 -noout -dates -issuer -subject"
-echo
-echo  " acme.sh auto-renew cron is installed. No more manual work!"
-green "Done. Your server is now secure. 🔐"
+msg " acme.sh auto-renew is active. Enjoy your secure server!" " تمدید خودکار فعال است. از سرور امن خود لذت ببرید!" "\e[1;32m"
+msg " Done. Have a secure day. 🔐" " تمام. روز امنی داشته باشید. 🔐"
 echo
 ```
