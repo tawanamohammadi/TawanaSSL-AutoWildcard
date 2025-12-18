@@ -53,45 +53,49 @@ update_panel_env() {
 show_banner() {
   clear
   echo -e "\e[1;36m"
-  echo "  ████████╗ █████╗ ██╗    ██╗ █████╗ ███╗   ██╗ █████╗     ███████╗███████╗██╗"
-  echo "  ╚══██╔══╝██╔══██╗██║    ██║██╔══██╗████╗  ██║██╔══██╗    ██╔════╝██╔════╝██║"
-  echo "     ██║   ███████║██║ █╗ ██║███████║██╔██╗ ██║███████║    ███████╗███████╗██║"
-  echo "     ██║   ██╔══██║██║███╗██║██╔══██║██║╚██╗██║██╔══██║    ╚════██║╚════██║██║"
-  echo "     ██║   ██║  ██║╚███╔███╔╝██║  ██║██║ ╚████║██║  ██║    ███████║███████║███████╗"
-  echo "     ╚═╝   ╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝    ╚══════╝╚══════╝╚══════╝"
+  echo "    ████████╗ █████╗ ██╗    ██╗ █████╗ ███╗   ██╗ █████╗ "
+  echo "    ╚══██╔══╝██╔══██╗██║    ██║██╔══██╗████╗  ██║██╔══██╗"
+  echo "       ██║   ███████║██║ █╗ ██║███████║██╔██╗ ██║███████║"
+  echo "       ██║   ██╔══██║██║███╗██║██╔══██║██║╚██╗██║██╔══██║"
+  echo "       ██║   ██║  ██║╚███╔███╔╝██║  ██║██║ ╚████║██║  ██║"
+  echo "       ╚═╝   ╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝"
+  echo -e "\e[1;34m"
+  echo "          S S L   A U T O M A T I O N   S U I T E "
   echo -e "\e[0m"
-  bold "  =============================================================================="
-  bold "                   TawanaSSL Auto Wildcard Suite (TAW) "
-  bold "  =============================================================================="
+  bold "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  bold "             TawanaSSL Elite v2.0 | Advanced Edition "
+  bold "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   echo
 }
 
 install_global() {
   show_banner
-  yellow "Installing TawanaSSL as a global command..."
+  yellow "  [⚡] Preliminary setup: Registering global command..."
   cp "$0" "$SCRIPT_PATH"
   chmod +x "$SCRIPT_PATH"
-  green "Success! You can now run the script anytime by typing: tawanassl"
+  sleep 1
+  green "  [✨] Success! Launch the suite anytime by typing: tawanassl"
   echo
 }
 
 update_script() {
   show_banner
-  yellow "Checking for updates..."
+  yellow "  [🔄] Checking for the latest Elite updates..."
   if curl -sL "$RAW_SCRIPT_URL" -o "$SCRIPT_PATH.tmp"; then
     mv "$SCRIPT_PATH.tmp" "$SCRIPT_PATH"
     chmod +x "$SCRIPT_PATH"
-    green "TawanaSSL has been updated to the latest version!"
+    green "  [🏆] TawanaSSL has been upgraded to the latest version!"
   else
-    red "Failed to update. Please check your internet connection."
+    red "  [❌] Update failed. Check your network or repository status."
   fi
   press_enter
 }
 
 check_ssl_status() {
   show_banner
-  yellow "SSL Certificate Status Monitor"
-  echo "------------------------------------------------"
+  cyan "  [🔍] SCANNING SYSTEM FOR ACTIVE CERTIFICATES..."
+  echo "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo
   
   local paths=(
     "/var/lib/marzban/certs"
@@ -100,13 +104,43 @@ check_ssl_status() {
     "/etc/x-ui/certs"
   )
 
+  local found=0
   for p in "${paths[@]}"; do
     if [[ -f "$p/fullchain.pem" ]]; then
-      cyan "Checking: $p"
-      openssl x509 -in "$p/fullchain.pem" -noout -dates -subject || red "Error reading certificate."
-      echo "------------------------------------------------"
+      found=1
+      local subject=$(openssl x509 -in "$p/fullchain.pem" -noout -subject | sed 's/.*CN = //; s/\/.*//')
+      local expiry_date=$(openssl x509 -in "$p/fullchain.pem" -noout -enddate | cut -d= -f2)
+      
+      # Cross-platform date parsing
+      local expiry_seconds=$(date -d "$expiry_date" +%s 2>/dev/null || date -jf "%b %d %T %Y %Z" "$expiry_date" +%s 2>/dev/null)
+      local now_seconds=$(date +%s)
+      local diff_seconds=$((expiry_seconds - now_seconds))
+      local diff_days=$((diff_seconds / 86400))
+
+      # Color coding based on health
+      local status_color="\e[32m" # Green
+      local status_text="HEALTHY"
+      if [ $diff_days -lt 7 ]; then
+        status_color="\e[31m" # Red
+        status_text="CRITICAL"
+      elif [ $diff_days -lt 30 ]; then
+        status_color="\e[33m" # Yellow
+        status_text="EXPIRING SOON"
+      fi
+
+      echo -e "  \e[1;36mDIRECTORY:\e[0m  $p"
+      echo -e "  \e[1;36mDOMAIN:   \e[0m  $subject"
+      echo -e "  \e[1;36mEXPIRES:  \e[0m  $expiry_date"
+      echo -e "  \e[1;36mSTATUS:   \e[0m  ${status_color}${status_text} (${diff_days} Days Remaining)\e[0m"
+      echo "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      echo
     fi
   done
+
+  if [ $found -eq 0 ]; then
+    yellow "  [!] No certificates found in standard panel paths."
+  fi
+  
   press_enter
 }
 
@@ -202,7 +236,7 @@ echo
 
 RELOAD_CMD="systemctl reload nginx || true"
 
-case "$PATH_CHOICE" in
+  case "$PATH_CHOICE" in
   1)
     TARGET_DIR="/var/lib/marzban/certs"
     RELOAD_CMD="$RELOAD_CMD; (systemctl restart marzban || systemctl restart marzban.service || true)"
@@ -224,12 +258,12 @@ case "$PATH_CHOICE" in
     ENV_FILE=""
     ;;
   5)
-    read -rp "Enter full certificate directory path: " TARGET_DIR
+    read -rp "  [?] Enter full certificate directory path: " TARGET_DIR
     ENV_FILE=""
     ;;
   *)
-    red "ERROR: Invalid choice."
-    exit 1
+    red "  [❌] ERROR: Invalid choice."
+    return 1
     ;;
 esac
 
@@ -332,28 +366,24 @@ if ! "$ACME_SH" --install-cert -d "$DOMAIN" --ecc \
   exit 1
 fi
 
-  green "Certificate installed and services reload command executed."
-  echo
-  
   # Final Summary
   show_banner
-  green "                   TawanaSSL Setup Completed! ✅"
-  bold "  =============================================================================="
+  green "                   [🏆] TawanaSSL Setup Completed! [🏆]"
+  bold "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   echo
-  green " Status:           SUCCESS ✅"
-  echo
-  echo " Domain:           $DOMAIN"
-  echo " Wildcard:         *.$DOMAIN"
-  echo " Certificate path: $TARGET_DIR"
+  echo -e "  \e[1;36mSTATUS:          \e[1;32mSUCCESS ✅\e[0m"
+  echo -e "  \e[1;36mDOMAIN:          \e[0m $DOMAIN"
+  echo -e "  \e[1;36mWILDCARD:        \e[0m *.$DOMAIN"
+  echo -e "  \e[1;36mTARGET PATH:     \e[0m $TARGET_DIR"
   echo
   if [[ -n "$ENV_FILE" ]]; then
-    yellow " Configuration:    Updated $ENV_FILE"
+    yellow "  [🛠️] CONFIGURATION: $ENV_FILE has been patched with SSL paths."
   fi
   echo
-  yellow " Useful test command:"
+  yellow "  [🧪] VERIFICATION COMMAND:"
   echo "   echo | openssl s_client -connect ${DOMAIN}:443 -servername ${DOMAIN} 2>/dev/null | openssl x509 -noout -dates"
   echo
-  green " acme.sh auto-renew is active. Enjoy your secure server!"
+  green "  [🛡️] Shield is active. Server restarted. Enjoy your freedom."
   echo
   press_enter
 }
@@ -365,25 +395,25 @@ fi
 main_menu() {
   while true; do
     show_banner
-    echo "  What would you like to do?"
-    echo "  1) Issue Wildcard SSL (New Setup)"
-    echo "  2) Check SSL Status"
-    echo "  3) Update TawanaSSL Script"
-    echo "  4) Uninstall / Remove Global Command"
-    echo "  0) Exit"
+    echo -e "  \e[1;37mPlease select an action:\e[0m"
+    echo -e "  \e[1;32m1)\e[0m Issue / Reinstall Wildcard SSL"
+    echo -e "  \e[1;32m2)\e[0m Monitor Certificate Status \e[33m(Updated)\e[0m"
+    echo -e "  \e[1;32m3)\e[0m Update TawanaSSL Engine"
+    echo -e "  \e[1;31m4)\e[0m Uninstall Global Suite"
+    echo -e "  \e[1;37m0) Exit\e[0m"
     echo
-    read -rp "  Select an option [0-4]: " choice
+    read -rp "  [⚡] Command >> " choice
 
     case $choice in
       1) issue_ssl ;;
       2) check_ssl_status ;;
       3) update_script ;;
       4) 
-        rm -i "$SCRIPT_PATH" && green "Global command removed." || red "Removal canceled."
+        rm -i "$SCRIPT_PATH" && green "  [✔] Global record purged." || red "  [!] Operation canceled."
         exit 0
         ;;
       0) exit 0 ;;
-      *) red "Invalid option." ; sleep 1 ;;
+      *) red "  [?] Invalid command." ; sleep 1 ;;
     esac
   done
 }
