@@ -12,7 +12,11 @@
 
 ---
 
-### **Automated Wildcard SSL Installer for Marzban, Marzneshin, Pasargad & Custom Linux Servers**  
+[🇮🇷 فارسی (Persian)](README_FA.md) | [🇺🇸 English](README.md)
+
+---
+
+### **Automated Wildcard SSL Installer for Marzban, Marzneshin, Pasargad, X-UI & Custom Linux Servers**  
 Using **Cloudflare DNS + acme.sh + Let’s Encrypt**
 
 
@@ -21,16 +25,16 @@ Using **Cloudflare DNS + acme.sh + Let’s Encrypt**
 
 
 
-TawanaSSL-AutoWildcard is a simple, interactive Bash script that automates issuing and installing **Let’s Encrypt wildcard SSL certificates** using **Cloudflare DNS**, designed especially for **Marzban**, **Marzneshin**, **Pasargad**, and any **custom HTTPS server setup**.
+TawanaSSL-AutoWildcard is a simple, interactive Bash script that automates issuing and installing **Let’s Encrypt wildcard SSL certificates** using **Cloudflare DNS**, designed especially for **Marzban**, **Marzneshin**, **Pasargad**, **3X-UI**, and any **custom HTTPS server setup**.
 
 It handles everything for you:
 
 * Installs **acme.sh** (if missing)
 * Issues wildcard SSL for `domain` and `*.domain`
 * Uses **Cloudflare DNS-01 challenge** (no HTTP challenge needed)
-* Installs certs into Marzban / Marzneshin / Pasargad / custom paths
+* Installs certs into Marzban / Marzneshin / Pasargad / X-UI / custom paths
 * Backs up old certificates safely
-* Reloads Nginx and restarts Marzban / Marzneshin / Pasargad
+* Reloads Nginx and restarts Marzban / Marzneshin / Pasargad / X-UI
 * Works with **auto-renewal** via acme.sh cron
 
 ---
@@ -57,13 +61,14 @@ It handles everything for you:
   * Uses Let’s Encrypt as default CA
   * Ensures certificates are renewed and reinstalled automatically
 
-* ✅ **Marzban, Marzneshin & Pasargad Friendly**
+* ✅ **Marzban, Marzneshin, Pasargad & X-UI Friendly**
 
   * Built-in support for:
 
     * `/var/lib/marzban/certs`
     * `/var/lib/marzneshin/certs`
     * `/var/lib/pasarguard/certs`
+    * `/etc/x-ui/certs`
   * Option for **custom certificate paths** (e.g. `/etc/nginx/ssl`)
 
 * ✅ **Service Reload & Restart**
@@ -133,6 +138,20 @@ Before using TawanaSSL-AutoWildcard, make sure you have:
 
 ---
 
+## 🌐 DNS Setup & Wildcard Magic
+
+Before running the script, follow these steps in your **Cloudflare Dashboard**:
+
+1.  **Point an A Record**: Create an A record for your domain (e.g., `yourdomain.com`) or a subdomain pointing to your **Server IP**.
+2.  **Wildcard Coverage**: Once this script issues a certificate for `*.yourdomain.com`, **all your subdomains** are automatically covered.
+    *   `panel.yourdomain.com` ✅ Secured
+    *   `vpn.yourdomain.com` ✅ Secured
+    *   `anything.yourdomain.com` ✅ Secured
+    
+You do **not** need to issue separate certificates for each subdomain. One Wildcard rules them all!
+
+---
+
 ## 📦 Installation
 
 Clone the repository and make the script executable:
@@ -181,7 +200,8 @@ You choose where the certificate should be installed:
 * `1` → **Marzban** → `/var/lib/marzban/certs`
 * `2` → **Marzneshin** → `/var/lib/marzneshin/certs`
 * `3` → **Pasargad** → `/var/lib/pasarguard/certs`
-* `4` → **Custom path** (you specify directory path)
+* `4` → **3X-UI / X-UI** → `/etc/x-ui/certs`
+* `5` → **Custom path** (you specify directory path)
 
 The script then configures a **reload command** such as:
 
@@ -219,7 +239,7 @@ If anything fails, you’ll see:
 
   * `fullchain.pem` → certificate
   * `key.pem` → private key
-* Executes the reload command (e.g. reloads Nginx, restarts Marzban/Marzneshin/Pasargad)
+* Executes the reload command (e.g. reloads Nginx, restarts Marzban/Marzneshin/Pasargad/X-UI)
 
 Finally, you get a **summary screen** with:
 
@@ -297,6 +317,8 @@ This project is relevant for:
 
 * `marzban ssl`
 * `marzneshin ssl`
+* `3x-ui ssl`
+* `x-ui certificate script`
 * `cloudflare wildcard ssl script`
 * `acme.sh cloudflare dns wildcard`
 * `letsencrypt wildcard certificate automation`

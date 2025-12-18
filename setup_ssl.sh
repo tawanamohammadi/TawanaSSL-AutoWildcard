@@ -94,6 +94,9 @@ echo
 yellow "Important:"
 echo "  - The domain MUST exist in your Cloudflare account."
 echo "  - The domain's nameservers MUST point to Cloudflare."
+echo "  - Ensure you have an A record pointing your domain/subdomain to this server."
+echo "  - Magic: This script issues a Wildcard SSL (*.domain), meaning"
+echo "    ALL your subdomains will be secured with this single certificate!"
 echo
 press_enter
 
@@ -104,10 +107,11 @@ echo "Select certificate installation path:"
 echo "  1) Marzban      (/var/lib/marzban/certs)"
 echo "  2) Marzneshin   (/var/lib/marzneshin/certs)"
 echo "  3) Pasargad     (/var/lib/pasarguard/certs)"
-echo "  4) Custom Path"
+echo "  4) 3X-UI / X-UI (/etc/x-ui/certs)"
+echo "  5) Custom Path"
 echo
 
-read -rp "Choose (1/2/3/4): " PATH_CHOICE
+read -rp "Choose (1/2/3/4/5): " PATH_CHOICE
 echo
 
 RELOAD_CMD="systemctl reload nginx || true"
@@ -129,6 +133,11 @@ case "$PATH_CHOICE" in
     ENV_FILE="/opt/pasarguard/.env"
     ;;
   4)
+    TARGET_DIR="/etc/x-ui/certs"
+    RELOAD_CMD="$RELOAD_CMD; (x-ui restart || systemctl restart x-ui || true)"
+    ENV_FILE=""
+    ;;
+  5)
     read -rp "Enter full certificate directory path (e.g. /etc/nginx/ssl): " TARGET_DIR
     ENV_FILE=""
     ;;
