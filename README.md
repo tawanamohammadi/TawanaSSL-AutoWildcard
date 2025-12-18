@@ -1,383 +1,105 @@
-# TawanaSSL-AutoWildcard
+# 🔐 TawanaSSL AutoWildcard Professional Suite
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/60a2a106-3c0e-49ec-8ac7-7ce0348ce765" width="85%" />
+  <img src="./tawanassl_hero_banner.png" alt="TawanaSSL Hero Banner" width="800px">
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/license-MIT-green">
-  <img src="https://img.shields.io/badge/language-Bash-blue">
-  <img src="https://img.shields.io/badge/DNS-Cloudflare-orange">
-</p>
+[![GitHub license](https://img.shields.io/github/license/tawanamohammadi/TawanaSSL-AutoWildcard?style=for-the-badge)](https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard/blob/main/LICENSE)
+[![Stars](https://img.shields.io/github/stars/tawanamohammadi/TawanaSSL-AutoWildcard?style=for-the-badge)](https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard/stargazers)
+[![Repo Size](https://img.shields.io/github/repo-size/tawanamohammadi/TawanaSSL-AutoWildcard?style=for-the-badge)](https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard)
+
+**TawanaSSL** is a high-performance, automated Wildcard SSL management suite. Designed for extreme censorship environments (RU, ZH, IR), it bridges the gap between complex Cloudflare DNS automation and one-click certificate deployment.
 
 ---
 
-[🇮🇷 فارسی (Persian)](README_FA.md) | [🇺🇸 English](README.md)
+### 🌐 Select Language / انتخاب زبان / Выберите язык / 选择语言
+[**English**](./README.md) | [**فارسی (Persian)**](./README_FA.md) | [**Русский (Russian)**](./README_RU.md) | [**简体中文 (Chinese)**](./README_ZH.md)
 
 ---
 
-### **Automated Wildcard SSL Installer for Marzban, Marzneshin, Pasargad, X-UI & Custom Linux Servers**  
-Using **Cloudflare DNS + acme.sh + Let’s Encrypt**
+## 🚀 Why TawanaSSL?
 
+Ordinary SSL scripts require you to manually point A-records or handle complex API calls. **TawanaSSL Elite** handles the entire lifecycle automatically.
 
-🔗 **Repository:** https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard  
-🌐 **Author Website:** https://tawana.online
-
-
-
-TawanaSSL-AutoWildcard is a simple, interactive Bash script that automates issuing and installing **Let’s Encrypt wildcard SSL certificates** using **Cloudflare DNS**, designed especially for **Marzban**, **Marzneshin**, **Pasargad**, **3X-UI**, and any **custom HTTPS server setup**.
-
-It handles everything for you:
-
-* Installs **acme.sh** (if missing)
-* Issues wildcard SSL for `domain` and `*.domain`
-* Uses **Cloudflare DNS-01 challenge** (no HTTP challenge needed)
-* Installs certs into Marzban / Marzneshin / Pasargad / X-UI / custom paths
-* Backs up old certificates safely
-* Reloads Nginx and restarts Marzban / Marzneshin / Pasargad / X-UI
-* Works with **auto-renewal** via acme.sh cron
+### 💎 Key Features
+- **⚡ Smart DNS Sync**: Automatically detects your server IP and creates/updates Cloudflare A-records.
+- **🌪️ Global Wildcard**: Issues single certificates (`*.domain.com`) that work for unlimited sub-nodes and panels.
+- **📊 Real-time Health Monitor**: Professional terminal UI with countdown timers for certificate expiration.
+- **🛡️ Shield Protection**: Automatic service discovery and reload for Marzban, X-UI, Hiddify, and more.
+- **🌍 Global Command**: Install once, run anywhere with the `tawanassl` command.
 
 ---
 
-## 🚀 Features
+## 📐 How it Works
 
-* ✅ **Wildcard SSL Support**
-
-  * Automatically issues certificates for:
-
-    * `yourdomain.com`
-    * `*.yourdomain.com`
-
-* ✅ **Cloudflare DNS Integration**
-
-  * Uses Cloudflare DNS API with:
-
-    * Cloudflare **Account Email**
-    * Cloudflare **Global API Key**
-
-* ✅ **Auto Install & Auto Renew**
-
-  * Installs **acme.sh** automatically (if not found)
-  * Uses Let’s Encrypt as default CA
-  * Ensures certificates are renewed and reinstalled automatically
-
-* ✅ **Marzban, Marzneshin, Pasargad & X-UI Friendly**
-
-  * Built-in support for:
-
-    * `/var/lib/marzban/certs`
-    * `/var/lib/marzneshin/certs`
-    * `/var/lib/pasarguard/certs`
-    * `/etc/x-ui/certs`
-  * Option for **custom certificate paths** (e.g. `/etc/nginx/ssl`)
-
-* ✅ **Service Reload & Restart**
-
-  * Reloads **Nginx**
-  * Tries to restart:
-
-    * `marzban` / `marzban.service`
-    * `marzneshin` / `marzneshin.service`
-    * `pasarguard` / `pasarguard.service`
-
-* ✅ **Backup & Safety**
-
-  * Automatically creates timestamped backups:
-
-    * `fullchain.pem.bak-YYYY-MM-DD-HHMMSS`
-    * `key.pem.bak-YYYY-MM-DD-HHMMSS`
-
-* ✅ **Clean, Human-Friendly Output**
-
-  * Colored terminal messages
-  * Step-by-step flow (6 clear steps)
-  * Summary screen at the end with test commands
+```mermaid
+graph TD
+    A[User Run tawanassl] --> B{Action?}
+    B -->|Issue SSL| C[Fetch Cloudflare Credentials]
+    C --> D[Automatic DNS IP Check]
+    D -->|Record Missing| E[Cloudflare API: Create A Record]
+    D -->|Pointed| F[acme.sh: Request Wildcard SSL]
+    E --> F
+    F --> G[Extract & Install to Target Panel]
+    G --> H[Service Auto-Reload]
+    B -->|Monitor| I[Scan Panel Certs & Show Health]
+    B -->|Update| J[Sync with GitHub Main]
+```
 
 ---
 
-## 🧩 Use Cases
+## 🛠️ Supported Panels & Paths
 
-* Securing **Marzban panel** and proxy infrastructures
-* Securing **Marzneshin** deployments
-* Securing **Pasargad** infrastructures
-* Deploying **wildcard HTTPS** for multiple subdomains
-* Automated SSL for:
-
-  * VPN / proxy servers
-  * Reverse proxies (Nginx)
-  * Custom web applications
-
-If you’re running a panel or proxy infrastructure and want **zero-pain SSL**, this script is for you.
+| Panel Name | Default Path | Restart/Reload Command |
+| :--- | :--- | :--- |
+| **Marzban** | `/var/lib/marzban/certs` | `systemctl restart marzban` |
+| **Marzneshin** | `/var/lib/marzneshin/certs` | `systemctl restart marzneshin` |
+| **Pasargad** | `/var/lib/pasarguard/certs` | `systemctl restart pasarguard` |
+| **3X-UI / X-UI** | `/etc/x-ui/certs` | `x-ui restart` |
+| **Hiddify** | `/opt/hiddify-manager/certs` | `hiddify-api restart` |
+| **Amnezia VPN** | `/opt/amnezia/certs` | `systemctl restart amnezia-vpn` |
 
 ---
 
-## 📋 Requirements
+## 📦 Installation & Setup
 
-Before using TawanaSSL-AutoWildcard, make sure you have:
+### 1. Requirements
+- **OS**: Ubuntu 20.04+ / Debian 11+ (Root access required)
+- **Domain**: Must be managed by Cloudflare.
+- **Credentials**: Cloudflare Email & Global API Key.
 
-1. **Linux server with root access**
-
-   * Ubuntu 20.04+ / Debian / other systemd-based distros
-
-2. **Domain managed in Cloudflare**
-
-   * The domain **must exist** in your Cloudflare account
-   * The domain’s **nameservers must point to Cloudflare**
-
-3. **Cloudflare credentials**
-
-   * Cloudflare **Account Email**
-   * Cloudflare **Global API Key**
-
-4. **Basic tools**
-
-   * `curl` (usually installed by default)
-   * `systemd` for service management (nginx, marzban, etc.)
-
-> 🔐 Your Cloudflare Global API Key is sensitive. Treat it like a password. The script does **not** save it to disk, only uses it in the current shell.
-
----
-
-## 🌐 DNS Setup & Wildcard Magic
-
-Before running the script, follow these steps in your **Cloudflare Dashboard**:
-
-1.  **Point an A Record**: Create an A record for your domain (e.g., `yourdomain.com`) or a subdomain pointing to your **Server IP**.
-2.  **Wildcard Coverage**: Once this script issues a certificate for `*.yourdomain.com`, **all your subdomains** are automatically covered.
-    *   `panel.yourdomain.com` ✅ Secured
-    *   `vpn.yourdomain.com` ✅ Secured
-    *   `anything.yourdomain.com` ✅ Secured
-    
-You do **not** need to issue separate certificates for each subdomain. One Wildcard rules them all!
-
----
-
-## 📦 Installation
-
-Clone the repository and make the script executable:
-
+### 2. One-Liner Install
+Run the magic command to install the suite globally:
 ```bash
-git clone https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard.git
-cd TawanaSSL-AutoWildcard
-
-chmod +x setup_ssl.sh
+sudo bash -c "$(curl -sL https://raw.githubusercontent.com/tawanamohammadi/TawanaSSL-AutoWildcard/main/setup_ssl.sh)" @ --install
 ```
 
----
-
-## 🛠 Usage: Step-by-Step
-
-Run the script as **root**:
-
+### 3. Launch the Suite
+Simply type:
 ```bash
-sudo ./setup_ssl.sh
+tawanassl
 ```
 
-You’ll be guided through 6 steps:
+---
 
-### 1️⃣ Cloudflare Credentials
+## ❓ FAQ & Troubleshooting
 
-* **Cloudflare Email**
-* **Cloudflare Global API Key** (input is hidden)
+**Q: Does it support ArvanCloud or other DNS providers?**
+A: Currently, only Cloudflare is supported for its global reliability and powerful API.
 
-### 2️⃣ Domain Configuration
+**Q: What if my domain is already used by another server?**
+A: The script will ask before updating an existing A-record. It won't overwrite anything without your permission.
 
-Enter your primary domain, for example:
-
-```text
-tawana.online
-```
-
-The script will request wildcard SSL for:
-
-* `tawana.online`
-* `*.tawana.online`
-
-### 3️⃣ Certificate Path & Service Mode
-
-You choose where the certificate should be installed:
-
-* `1` → **Marzban** → `/var/lib/marzban/certs`
-* `2` → **Marzneshin** → `/var/lib/marzneshin/certs`
-* `3` → **Pasargad** → `/var/lib/pasarguard/certs`
-* `4` → **3X-UI / X-UI** → `/etc/x-ui/certs`
-* `5` → **Custom path** (you specify directory path)
-
-The script then configures a **reload command** such as:
-
-```bash
-systemctl reload nginx || true; (systemctl restart marzban || systemctl restart marzban.service || true)
-```
-
-### 4️⃣ acme.sh Installation
-
-* Checks if `acme.sh` exists under `/root/.acme.sh/acme.sh`
-* If missing, downloads and installs it
-* Sets **Let’s Encrypt** as the default Certificate Authority
-
-### 5️⃣ Wildcard SSL Issuance
-
-The script uses `acme.sh` with **Cloudflare DNS validation**:
-
-```bash
-acme.sh --issue \
-  --dns dns_cf \
-  -d yourdomain.com \
-  -d "*.yourdomain.com" \
-  --keylength ec-256
-```
-
-If anything fails, you’ll see:
-
-* Clear error message
-* Common reasons (e.g. domain not in Cloudflare, wrong nameservers, wrong API key)
-
-### 6️⃣ Certificate Installation & Reload
-
-* Backs up any existing `fullchain.pem` and `key.pem` in the target directory
-* Installs the new certificate and key:
-
-  * `fullchain.pem` → certificate
-  * `key.pem` → private key
-* Executes the reload command (e.g. reloads Nginx, restarts Marzban/Marzneshin/Pasargad/X-UI)
-
-Finally, you get a **summary screen** with:
-
-* Domain and wildcard
-* Certificate path
-* Reload command used
-* Handy `openssl` test commands
+**Q: Where can I find my Cloudflare API Key?**
+A: Login to Cloudflare > My Profile > API Tokens > **Global API Key** (View).
 
 ---
 
-## 🔍 Verifying Your SSL Certificate
+## 🔒 Security
+- **Root Protection**: Script checks for root privileges to ensure system services can be managed.
+- **No Private Key Sharing**: All sensitive keys (Cloudflare Key) stay in your local environment and are never transmitted to any third-party server besides Cloudflare.
 
-You can verify your SSL certificate directly from the server.
+## 🤝 Community & Support
+Developed for the community to fight censorship. If you found this useful, please ⭐ **Star** the repository and share it with others.
 
-### Check Main Domain
-
-```bash
-echo | openssl s_client -connect yourdomain.com:443 -servername yourdomain.com 2>/dev/null | openssl x509 -noout -dates -issuer -subject
-```
-
-### Check a Subdomain (e.g. Marzban Panel)
-
-```bash
-echo | openssl s_client -connect panel.yourdomain.com:443 -servername panel.yourdomain.com 2>/dev/null | openssl x509 -noout -dates -issuer -subject
-```
-
-You should see:
-
-* `issuer` → Let’s Encrypt (E6/E7, etc.)
-* `notAfter` → expiry date ~90 days in the future
-* `subject` → matching your domain
-
----
-
-## 🔁 Auto-Renewal & Maintenance
-
-The underlying **acme.sh** client automatically:
-
-* Installs a cron job
-* Renews certificates **before** they expire
-
-Because this script uses:
-
-```bash
-acme.sh --install-cert ... --reloadcmd "..."
-```
-
-On each renewal:
-
-* The new certificate and key are written to your target directory
-* The configured reload command is executed (e.g. Nginx reload + Marzban/Marzneshin restart)
-
-You don’t need to manually repeat the setup process unless you:
-
-* Change the domain
-* Change the server
-* Change the certificate path
-
----
-
-## 🔐 Security Best Practices
-
-* **Never** hard-code your Cloudflare Global API Key inside the script
-* Do **not** commit API keys or secrets to GitHub or any VCS
-* Restrict Cloudflare account access and enable 2FA
-* Use separate API keys for production vs. testing when possible
-
-The script only uses `CF_Email` and `CF_Key` as **environment variables** in the current shell during execution.
-
----
-
-## 🧠 SEO Keywords (for search engines)
-
-This project is relevant for:
-
-* `marzban ssl`
-* `marzneshin ssl`
-* `3x-ui ssl`
-* `x-ui certificate script`
-* `cloudflare wildcard ssl script`
-* `acme.sh cloudflare dns wildcard`
-* `letsencrypt wildcard certificate automation`
-* `ubuntu marzban https setup`
-* `pasargad ssl automation`
-* `vpn panel ssl automation`
-
-If you searched for any of those, you’re in the right place.
-
----
-
-## 👤 Author
-
-**Tawana Mohammadi**
-Ethical AI, Security & Infrastructure Researcher
-🌐 Website: [https://tawana.online](https://tawana.online)
-GitHub: [https://github.com/tawanamohammadi](https://github.com/tawanamohammadi)
-
-If you find this tool useful, consider giving the repository a ⭐ on GitHub.
-
----
-
-## 📜 License
-
-This project is licensed under the **MIT License**.
-
-You are free to:
-
-* Use it commercially
-* Modify it
-* Distribute it
-* Private use
-
-As long as you retain the original copyright and license notice.
-
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome.
-
-You can:
-
-* Open an **Issue** for bugs or feature ideas
-* Submit **Pull Requests** for:
-
-  * New DNS providers
-  * Additional panels or service integrations
-  * Better error handling or UX improvements
-
----
-
-## 💡 Ideas for Future Extensions
-
-* Support for other DNS providers (e.g. Cloudflare API Tokens, DNSPod, Route53)
-* Automatic Nginx config generator for Marzban / Marzneshin
-* Systemd service wrapper for full one-command bootstrap
-* Web UI wrapper for non-technical users
-
----
-
-Happy encrypting and stay safe on the Internet. 🔐
+Developed with ❤️ by [**Tawana Mohammadi**](https://github.com/tawanamohammadi)

@@ -145,93 +145,146 @@ check_ssl_status() {
 }
 
 # ========================
+#   DNS Automation Logic
+# ========================
+
+get_zone_id() {
+  local domain=$1
+  local email=$2
+  local key=$3
+  # Extract apex domain (example.com from sub.example.com)
+  local apex_domain=$(echo "$domain" | grep -oP '(?<=\.)[^.]+\.[^.]+$' || echo "$domain")
+  
+  local zone_id=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=$apex_domain" \
+    -H "X-Auth-Email: $email" \
+    -H "X-Auth-Key: $key" \
+    -H "Content-Type: application/json" | grep -oP '(?<="id":")[^"]+' | head -n1)
+  
+  echo "$zone_id"
+}
+
+check_or_create_dns() {
+  local domain=$1
+  local email=$2
+  local key=$3
+  
+  show_banner
+  yellow "  [🛰️] DNS AUTOMATION: Verifying record for $domain..."
+  
+  local zone_id=$(get_zone_id "$domain" "$email" "$key")
+  
+  if [[ -z "$zone_id" ]]; then
+    red "  [❌] Failed to fetch Cloudflare Zone ID. Please ensure domain is in your account."
+    return 1
+  fi
+
+  # Check if A record exists
+  local record_ip=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$zone_id/dns_records?type=A&name=$domain" \
+    -H "X-Auth-Email: $email" \
+    -H "X-Auth-Key: $key" | grep -oP '(?<="content":")[^"]+' | head -n1)
+
+  local server_ip=$(curl -s https://ipinfo.io/ip)
+
+  if [[ "$record_ip" == "$server_ip" ]]; then
+    green "  [✅] DNS record already correctly points to this server IP ($server_ip)."
+  else
+    if [[ -z "$record_ip" ]]; then
+      yellow "  [!] No A record found for $domain."
+    else
+      yellow "  [!] Existing record points to $record_ip (Current server is $server_ip)."
+    fi
+    
+    read -rp "  [?] Create/Update A record to point to this server? (y/n): " dns_confirm
+    if [[ "$dns_confirm" =~ ^[Yy]$ ]]; then
+      if [[ -z "$record_ip" ]]; then
+        # Create new
+        curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$zone_id/dns_records" \
+          -H "X-Auth-Email: $email" \
+          -H "X-Auth-Key: $key" \
+          -H "Content-Type: application/json" \
+          --data "{\"type\":\"A\",\"name\":\"$domain\",\"content\":\"$server_ip\",\"ttl\":1,\"proxied\":false}" > /dev/null
+        green "  [🚀] DNS A-record created successfully!"
+      else
+        # Update existing
+        local record_id=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$zone_id/dns_records?type=A&name=$domain" \
+          -H "X-Auth-Email: $email" \
+          -H "X-Auth-Key: $key" | grep -oP '(?<="id":")[^"]+' | head -n1)
+          
+        curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/$zone_id/dns_records/$record_id" \
+          -H "X-Auth-Email: $email" \
+          -H "X-Auth-Key: $key" \
+          -H "Content-Type: application/json" \
+          --data "{\"type\":\"A\",\"name\":\"$domain\",\"content\":\"$server_ip\",\"ttl\":1,\"proxied\":false}" > /dev/null
+        green "  [🚀] DNS A-record updated to $server_ip!"
+      fi
+    fi
+  fi
+  sleep 2
+}
+
+# ========================
 #   Core SSL Logic
 # ========================
 
 issue_ssl() {
   show_banner
-  bold "  Automated Wildcard SSL for Marzban / Marzneshin / Pasargad / X-UI"
+  bold "  Automated Wildcard SSL Professional Suite"
   cyan "  Repo : $REPO_URL"
   echo
 
   # ---- Step 1: Get Cloudflare credentials ----
   yellow "[Step 1/6] Cloudflare credentials"
-  read -rp "Enter your Cloudflare Email: " CF_Email
+  read -rp "  Enter your Cloudflare Email: " CF_Email
   if [[ -z "$CF_Email" ]]; then
-    red "ERROR: Cloudflare Email cannot be empty."
+    red "  ERROR: Cloudflare Email cannot be empty."
     return 1
   fi
 
-  read -rsp "Enter your Cloudflare Global API Key: " CF_Key
+  read -rsp "  Enter your Cloudflare Global API Key: " CF_Key
   echo
   if [[ -z "$CF_Key" ]]; then
-    red "ERROR: Cloudflare Global API Key cannot be empty."
+    red "  ERROR: Cloudflare Global API Key cannot be empty."
     return 1
   fi
   echo
 
-# ---- Step 1: Get Cloudflare credentials ----
-yellow "[Step 1/6] Cloudflare credentials"
-read -rp "Enter your Cloudflare Email: " CF_Email
-if [[ -z "$CF_Email" ]]; then
-  red "ERROR: Cloudflare Email cannot be empty."
-  exit 1
-fi
-
-read -rsp "Enter your Cloudflare Global API Key: " CF_Key
-echo
-if [[ -z "$CF_Key" ]]; then
-  red "ERROR: Cloudflare Global API Key cannot be empty."
-  exit 1
-fi
-echo
-
-# ---- Step 1: Get Cloudflare credentials ----
-msg "[Step 1/6] Cloudflare credentials" "[مرحله ۱/۶] اطلاعات کلودفلر" "\e[33m"
-read -rp "$(msg "Enter your Cloudflare Email: " "ایمیل کلودفلر خود را وارد کنید: ") " CF_Email
-if [[ -z "$CF_Email" ]]; then
-  msg "ERROR: Cloudflare Email cannot be empty." "خطا: ایمیل کلودفلر نمی‌تواند خالی باشد." "\e[31m"
-  exit 1
-fi
-
-read -rsp "$(msg "Enter your Cloudflare Global API Key: " "کلید API کلودفلر را وارد کنید: ") " CF_Key
-echo
-if [[ -z "$CF_Key" ]]; then
-  msg "ERROR: Cloudflare Global API Key cannot be empty." "خطا: کلید API کلودفلر نمی‌تواند خالی باشد." "\e[31m"
-  exit 1
-fi
-echo
-
-# ---- Step 2: Get domain ----
+# ---- Step 2: Get domain & DNS Sync ----
 yellow "[Step 2/6] Domain configuration"
-read -rp "Enter your main domain (example: panbehpanel.ir): " DOMAIN
+read -rp "  Enter your domain (example.com): " DOMAIN
 
 if [[ -z "$DOMAIN" ]]; then
-  red "ERROR: Domain cannot be empty."
-  exit 1
+  red "  ERROR: Domain cannot be empty."
+  return 1
 fi
 
+# DNS Automation Trigger
+check_or_create_dns "$DOMAIN" "$CF_Email" "$CF_Key"
+
+show_banner
+yellow "[Step 2/6] Domain confirmed: $DOMAIN"
 echo
-bold "Important:"
-echo "  - The domain MUST exist in your Cloudflare account."
-echo "  - The domain's nameservers MUST point to Cloudflare."
-echo "  - Ensure you have an A record pointing your domain to this server."
-cyan "  - Magic: This issues a Wildcard SSL (*.domain) for ALL subdomains!"
+bold "  Important Visibility Note:"
+echo "  - This issues a Wildcard SSL (*.domain) for ALL subdomains."
+cyan "  - One certificate secures panel.domain, node1.domain, etc."
 echo
 press_enter
 
-# ---- Step 3: Choose certificate path & reload behavior ----
+# ---- Step 3: Choose certificate path ----
 echo
-yellow "[Step 3/6] Certificate install path & service reload"
-echo "Select certificate installation path:"
-echo "  1) Marzban      (/var/lib/marzban/certs)"
-echo "  2) Marzneshin   (/var/lib/marzneshin/certs)"
-echo "  3) Pasargad     (/var/lib/pasarguard/certs)"
-echo "  4) 3X-UI / X-UI (/etc/x-ui/certs)"
-echo "  5) Custom Path"
+yellow "[Step 3/6] Software Panel & Path selection"
+echo "  [Regional Favorites]"
+echo "    1) Marzban      (/var/lib/marzban/certs)"
+echo "    2) Marzneshin   (/var/lib/marzneshin/certs)"
+echo "    3) Pasargad     (/var/lib/pasarguard/certs)"
+echo "  [Global Favorites]"
+echo "    4) 3X-UI / X-UI (/etc/x-ui/certs)"
+echo "    5) Hiddify      (/opt/hiddify-manager/certs)"
+echo "    6) Amnezia VPN  (/opt/amnezia/certs)"
+echo "  [Universal]"
+echo "    7) Custom Path"
 echo
 
-read -rp "Choose (1/2/3/4/5): " PATH_CHOICE
+read -rp "  [⚡] Selection >> " PATH_CHOICE
 echo
 
 RELOAD_CMD="systemctl reload nginx || true"
@@ -239,17 +292,17 @@ RELOAD_CMD="systemctl reload nginx || true"
   case "$PATH_CHOICE" in
   1)
     TARGET_DIR="/var/lib/marzban/certs"
-    RELOAD_CMD="$RELOAD_CMD; (systemctl restart marzban || systemctl restart marzban.service || true)"
+    RELOAD_CMD="$RELOAD_CMD; (systemctl restart marzban || true)"
     ENV_FILE="/opt/marzban/.env"
     ;;
   2)
     TARGET_DIR="/var/lib/marzneshin/certs"
-    RELOAD_CMD="$RELOAD_CMD; (systemctl restart marzneshin || systemctl restart marzneshin.service || true)"
+    RELOAD_CMD="$RELOAD_CMD; (systemctl restart marzneshin || true)"
     ENV_FILE=""
     ;;
   3)
     TARGET_DIR="/var/lib/pasarguard/certs"
-    RELOAD_CMD="$RELOAD_CMD; (systemctl restart pasarguard || systemctl restart pasarguard.service || true)"
+    RELOAD_CMD="$RELOAD_CMD; (systemctl restart pasarguard || true)"
     ENV_FILE="/opt/pasarguard/.env"
     ;;
   4)
@@ -258,6 +311,16 @@ RELOAD_CMD="systemctl reload nginx || true"
     ENV_FILE=""
     ;;
   5)
+    TARGET_DIR="/opt/hiddify-manager/certs"
+    RELOAD_CMD="$RELOAD_CMD; (hiddify-api restart || systemctl restart hiddify-manager || true)"
+    ENV_FILE=""
+    ;;
+  6)
+    TARGET_DIR="/opt/amnezia/certs"
+    RELOAD_CMD="$RELOAD_CMD; (systemctl restart amnezia-vpn || true)"
+    ENV_FILE=""
+    ;;
+  7)
     read -rp "  [?] Enter full certificate directory path: " TARGET_DIR
     ENV_FILE=""
     ;;
