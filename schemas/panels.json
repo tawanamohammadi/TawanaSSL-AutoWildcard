@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "name": "Marzban",
+    "path": "/var/lib/marzban/certs",
+    "reload": "systemctl restart marzban || true",
+    "env": "/opt/marzban/.env"
+  },
+  {
+    "id": 2,
+    "name": "Marzneshin",
+    "path": "/var/lib/marzneshin/certs",
+    "reload": "systemctl restart marzneshin || true",
+    "env": ""
+  },
+  {
+    "id": 3,
+    "name": "Pasargad",
+    "path": "/var/lib/pasarguard/certs",
+    "reload": "systemctl restart pasarguard || true",
+    "env": "/opt/pasarguard/.env"
+  },
+  {
+    "id": 4,
+    "name": "3X-UI / X-UI",
+    "path": "/etc/x-ui/certs",
+    "reload": "x-ui restart || systemctl restart x-ui || true",
+    "env": ""
+  },
+  {
+    "id": 5,
+    "name": "Hiddify",
+    "path": "/opt/hiddify-manager/certs",
+    "reload": "hiddify-api restart || systemctl restart hiddify-manager || true",
+    "env": ""
+  },
+  {
+    "id": 6,
+    "name": "Amnezia VPN",
+    "path": "/opt/amnezia/certs",
+    "reload": "systemctl restart amnezia-vpn || true",
+    "env": ""
+  }
+]

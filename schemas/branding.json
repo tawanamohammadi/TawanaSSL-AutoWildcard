@@ -1,0 +1,11 @@
+{
+    "theme": "elite",
+    "colors": {
+        "primary": "cyan",
+        "secondary": "blue",
+        "accent": "yellow",
+        "error": "red",
+        "success": "green"
+    },
+    "banner_text": "TawanaSSL Elite Suite"
+}

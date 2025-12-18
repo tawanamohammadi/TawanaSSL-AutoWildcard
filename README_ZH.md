@@ -1,7 +1,7 @@
 # 🔐 TawanaSSL AutoWildcard Professional Suite (简体中文)
 
 <p align="center">
-  <img src="./tawanassl_hero_banner.png" alt="TawanaSSL Hero Banner" width="800px">
+  <img src="https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard/raw/main/TawanaSSL.jpg" alt="TawanaSSL Hero Banner" width="100%">
 </p>
 
 [![GitHub license](https://img.shields.io/github/license/tawanamohammadi/TawanaSSL-AutoWildcard?style=for-the-badge)](https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard/blob/main/LICENSE)
