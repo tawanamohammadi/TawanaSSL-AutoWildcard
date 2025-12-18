@@ -3,8 +3,13 @@
 # This file is symlinked to /usr/local/bin/tawanassl
 
 # Resolve script directory to source core modules
-SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-export TAWANA_ROOT="$SCRIPT_DIR"
+# When installed globally, this script is symlinked from /usr/local/tawanassl/core/main.sh
+# So the directory of the real script is .../tawanassl/core
+REAL_SCRIPT_PATH="$(readlink -f "$0")"
+CORE_DIR="$(dirname "$REAL_SCRIPT_PATH")"       # /usr/local/tawanassl/core
+INSTALL_ROOT="$(dirname "$CORE_DIR")"           # /usr/local/tawanassl
+
+export TAWANA_ROOT="$INSTALL_ROOT"
 
 # Source Core Modules
 source "$TAWANA_ROOT/core/ui.sh"
