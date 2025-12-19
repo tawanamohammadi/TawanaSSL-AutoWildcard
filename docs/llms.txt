@@ -1,0 +1,8 @@
+# TawanaSSL Elite
+Automated Wildcard SSL & DNS management for proxy panels (Marzban, X-UI, Hiddify).
+
+- Site: https://tawanamohammadi.github.io/TawanaSSL-AutoWildcard/
+- GitHub: https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard
+- Install: sudo bash -c "$(curl -sL https://raw.githubusercontent.com/tawanamohammadi/TawanaSSL-AutoWildcard/main/setup_ssl.sh)" @ --install
+
+Full docs for LLMs: https://tawanamohammadi.github.io/TawanaSSL-AutoWildcard/llms-full.txt

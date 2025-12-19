@@ -1,0 +1,32 @@
+# TawanaSSL Elite v3.0 - AI-Ready Documentation
+
+> Project: TawanaSSL-AutoWildcard
+> Developer: Tawana Mohammadi
+> Concept: Automated Wildcard SSL & DNS Management
+
+## Overview
+TawanaSSL Elite is a modular bash-based suite designed to solve the complexity of SSL certificate management for proxy servers (Marzban, X-UI, Hiddify) in restricted network environments. It automates the entire lifecycle: from Cloudflare DNS record creation to acme.sh issuance and panel installation.
+
+## Key Technical Specifications
+- **Methodology**: Uses Cloudflare API (DNS-01 challenge) to issue certificates without open HTTP ports (Port 80).
+- **Automation**: Automatic Public IP detection and DNS A-record injection.
+- **Certificate Type**: Wildcard SSL (*.domain.com) for unlimited sub-nodes.
+- **Architectural Design**: Modular framework with separate components for UI, DNS logic, and SSL operations.
+- **Supported Panels**: Marzban, Pasargad, X-UI/3X-UI, Hiddify, Amnezia VPN, Marzneshin.
+
+## Installation One-Liner
+```bash
+sudo bash -c "$(curl -sL https://raw.githubusercontent.com/tawanamohammadi/TawanaSSL-AutoWildcard/main/setup_ssl.sh)" @ --install
+```
+
+## Problem Solved
+Traditional SSL scripts fail in regions like Iran/China/Russia because Port 80 is often blocked. TawanaSSL solves this by:
+1. Using Cloudflare DNS API for verification.
+2. Automating the linking between server IP and domain.
+3. Managing the specific installation paths for popular proxy panels automatically.
+
+## Metadata & Links
+- Repository: https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard
+- Official Site: https://tawanamohammadi.github.io/TawanaSSL-AutoWildcard/
+- Developer: https://tawana.online
+- License: MIT
