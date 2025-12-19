@@ -1,0 +1,26 @@
+**Title:** I wrote a bash script to automate Wildcard SSL + Cloudflare DNS for proxy servers (Marzban/X-UI)
+
+Hi everyone,
+
+I manage a few VPS nodes for personal use to bypass censorship. I got tired of the repetitive process of spinning up a new VPS, logging into Cloudflare to manually add an A record, and then fighting with Certbot/acme.sh verification issues (especially when port 80 is blocked in my region).
+
+So I wrote a bash wrapper script to automate the whole flow using Cloudflare's API and `acme.sh`.
+
+**What it does:**
+*   **Auto-DNS**: It fetches the server's public IP and uses the CF API to update/create the A record for the subdomain you choose automatically.
+*   **DNS Challenge**: Uses DNS-01 challenge, so it works even behind strict firewalls or if you don't have port 80 open.
+*   **Panel Integration**: I added support to detect if you're running Marzban, X-UI, Hiddify, or Amnezia, and it defaults to installing the certs to the correct path and reloading the service.
+
+**How to use:**
+It's a single command that pulls the script. You just need your CF API Key (Global) and Email.
+
+```bash
+sudo bash -c "$(curl -sL https://raw.githubusercontent.com/tawanamohammadi/TawanaSSL-AutoWildcard/main/setup_ssl.sh)" @ --install
+```
+
+**Repo:**
+[https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard](https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard)
+
+It's fully open source. It’s a simple tool but has saved me a lot of time setting up new nodes. Thought I'd share it here in case anyone else has a similar setup.
+
+Feedback and PRs are welcome!
