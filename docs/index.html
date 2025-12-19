@@ -32,7 +32,7 @@
     <meta property="twitter:image"
         content="https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard/raw/main/TawanaSSL.jpg">
 
-    <!-- JSON-LD Schema -->
+    <!-- JSON-LD Schema (Software & FAQ for AEO) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -48,6 +48,38 @@
       },
       "description": "Automated Wildcard SSL management suite for high-performance proxy environments.",
       "softwareVersion": "3.0.0"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does TawanaSSL solve Port 80 blocking?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "TawanaSSL uses the Cloudflare DNS-01 challenge, which verifies domain ownership via DNS records instead of HTTP, bypassing firewalls and blocked ports."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does TawanaSSL support Marzban and X-UI?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, it offers native automated installation for Marzban, X-UI, Hiddify, Pasargad, and Amnezia VPN panels."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I get a Wildcard SSL for all my subdomains?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Correct. TawanaSSL issues a Wildcard certificate (*.domain.com) which secures your main panel and all your proxy sub-nodes."
+          }
+        }
+      ]
     }
     </script>
 
