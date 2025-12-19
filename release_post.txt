@@ -1,0 +1,31 @@
+🔥 **دریافت خودکار SSL برای پنل‌های فیلترشکن**
+**(نسخه جدید TawanaSSL Elite منتشر شد)**
+
+دیگه لازم نیست برای گرفتن SSL درگیر کلودفلر یا دستورات پیچیده بشید. این اسکریپت همه کارها رو خودش انجام میده.
+
+✅ **این ابزار چیکار میکنه؟**
+۱. آی‌پی سرور شما رو شناسایی میکنه.
+۲. خودش میره توی کلودفلر رکورد DNS رو میسازه.
+۳. گواهینامه امن (Wildcard SSL) میگیره.
+۴. روی پنل شما نصب میکنه و سرویس رو ریستارت میکنه.
+
+� **پنل‌های پشتیبانی شده:**
+🔹 **Marzban** (مرزبان)
+🔹 **X-UI / 3X-UI / Sanaei**
+� **Hiddify** (هیدیفای)
+🔹 **Amnezia VPN**
+🔹 **Pasargad**
+🔹 **Marzneshin**
+
+⚙️ **دستور نصب (کپی کنید و در ترمینال بزنید):**
+```bash
+sudo bash -c "$(curl -sL https://raw.githubusercontent.com/tawanamohammadi/TawanaSSL-AutoWildcard/main/setup_ssl.sh)" @ --install
+```
+
+🌐 **مشاهده سایت و آموزش کامل:**
+https://tawanamohammadi.github.io/TawanaSSL-AutoWildcard/
+
+⭐️ **حمایت از پروژه در گیت‌هاب:**
+https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard
+
+#SSL #Marzban #XUI #Hiddify #V2Ray #AntiCensorship

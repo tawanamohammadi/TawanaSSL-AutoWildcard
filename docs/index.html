@@ -123,7 +123,10 @@
             direction: ltr;
         }
 
-        /* Keep code LTR */
+        [dir="rtl"] .ltr-force {
+            direction: ltr;
+            text-align: left;
+        }
     </style>
 </head>
 
@@ -155,7 +158,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center justify-center pt-20">
+    <section class="relative min-h-[90vh] flex items-center justify-center pt-20">
         <!-- Background Orbs -->
         <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
             <div
@@ -167,14 +170,12 @@
 
         <div class="relative z-10 container mx-auto px-6 text-center max-w-5xl">
 
-            <!-- Version Badge -->
             <div
                 class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-sm font-mono tracking-wide mb-8 animate-[fadeIn_1s_ease-out]">
                 <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
                 <span id="txt-version">v3.0 ELITE EDITION</span>
             </div>
 
-            <!-- Main Title -->
             <h1 class="text-5xl md:text-8xl font-bold tracking-tight mb-8 leading-tight">
                 <span
                     class="bg-clip-text text-transparent bg-gradient-to-r from-white via-cyan-200 to-cyan-500 glow-text"
@@ -185,14 +186,14 @@
 
             <p class="text-lg md:text-2xl text-slate-400 max-w-3xl mx-auto mb-12 leading-relaxed" id="txt-desc">
                 The most advanced <b>Automated Wildcard SSL</b> suite.
-                Zero-config DNS. Censorship Resistant. Native support for Marzban, X-UI, Hiddify.
+                Zero-config DNS. Resistance against Censorship. Native support for Marzban, X-UI, Hiddify.
             </p>
 
             <!-- Install Box -->
             <div class="max-w-3xl mx-auto mb-12">
                 <div class="gradient-border p-[1px] group cursor-pointer" onclick="copyCommand()">
                     <div class="bg-slate-900/90 backdrop-blur p-6 relative flex items-center justify-between gap-4">
-                        <code class="font-mono text-cyan-300 text-sm md:text-base break-all text-left flex-1"
+                        <code class="font-mono text-cyan-300 text-sm md:text-base break-all text-left flex-1 ltr-force"
                             id="install-cmd">
                             sudo bash -c "$(curl -sL https://raw.githubusercontent.com/tawanamohammadi/TawanaSSL-AutoWildcard/main/setup_ssl.sh)" @ --install
                         </code>
@@ -211,9 +212,8 @@
                 </p>
             </div>
 
-            <!-- Buttons -->
             <div class="flex flex-wrap justify-center gap-4">
-                <a href="https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard" target="_blank"
+                <a href="#github-star"
                     class="px-8 py-3.5 rounded-xl bg-white text-slate-900 font-bold hover:bg-cyan-50 transition-all flex items-center gap-2 shadow-lg shadow-white/10">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                         <path
@@ -221,7 +221,7 @@
                     </svg>
                     <span id="btn-star">Star on GitHub</span>
                 </a>
-                <a href="#features"
+                <a href="#how"
                     class="px-8 py-3.5 rounded-xl glass text-cyan-300 font-semibold hover:bg-white/5 transition-all border border-cyan-500/20">
                     <span id="btn-explore">Explore Features</span>
                 </a>
@@ -229,59 +229,79 @@
         </div>
     </section>
 
-    <!-- Features Grid -->
-    <section id="features" class="py-24 relative z-10">
+    <!-- NEW: The Problem vs Solution -->
+    <section id="how" class="py-24 bg-slate-900/50">
         <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Card 1 -->
-                <div class="glass p-8 rounded-2xl hover:border-cyan-500/30 transition-all group">
-                    <div
-                        class="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-white" id="f1-title">Auto DNS Sync</h3>
-                    <p class="text-slate-400 leading-relaxed" id="f1-desc">Detects your server IP automatically and
-                        updates Cloudflare A-records. No manual configuration needed.</p>
-                </div>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-6 text-white" id="prob-title">Why is SSL Hard?</h2>
+                    <p class="text-slate-400 mb-4 leading-relaxed" id="prob-desc-1">
+                        In restricted networks (Iran, China, Russia), obtaining a valid SSL certificate is a nightmare.
+                        Port 80 is often blocked, DNS propagation is slow, and regular scripts fail because they can't
+                        verify ownership.
+                    </p>
+                    <p class="text-slate-400 mb-6 leading-relaxed" id="prob-desc-2">
+                        Usually, you have to manually login to Cloudflare, create an A-record, wait for it, run acme.sh,
+                        and then manually reload your panel. It's tedious and error-prone.
+                    </p>
 
-                <!-- Card 2 -->
-                <div class="glass p-8 rounded-2xl hover:border-cyan-500/30 transition-all group">
-                    <div
-                        class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
-                            </path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-white" id="f2-title">Universal Wildcard</h3>
-                    <p class="text-slate-400 leading-relaxed" id="f2-desc">One certificate (*.domain.com) for all your
-                        panels and sub-nodes. Ideal for heavy proxy usage.</p>
+                    <h2 class="text-3xl font-bold mb-6 text-cyan-400" id="sol-title">The Tawana Solution</h2>
+                    <ul class="space-y-4 text-slate-300">
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400">✓</span>
+                            <span id="sol-1">Takes your Cloudflare API Key securely.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400">✓</span>
+                            <span id="sol-2">Automatically checks your server's Public IP.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400">✓</span>
+                            <span id="sol-3">Injects the correct DNS A-record via API instantly.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400">✓</span>
+                            <span id="sol-4">Issues a robust Wildcard Certificate (*.site.com).</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400">✓</span>
+                            <span id="sol-5">Installs it directly into X-UI, Marzban, etc.</span>
+                        </li>
+                    </ul>
                 </div>
-
-                <!-- Card 3 -->
-                <div class="glass p-8 rounded-2xl hover:border-cyan-500/30 transition-all group">
-                    <div
-                        class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-6 text-green-400 group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
-                            </path>
-                        </svg>
+                <div class="glass p-8 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-mono text-cyan-400 mb-4 border-b border-slate-700 pb-2">Technical Workflow
+                    </h3>
+                    <div class="space-y-4 font-mono text-sm">
+                        <div class="flex justify-between items-center text-slate-500">
+                            <span>1. User Input</span>
+                            <span class="text-xs bg-slate-800 px-2 py-1 rounded">START</span>
+                        </div>
+                        <div class="h-8 border-l-2 border-slate-700 ml-4 border-dashed"></div>
+                        <div class="flex justify-between items-center text-white">
+                            <span>2. DNS Sync (API)</span>
+                            <span class="text-xs bg-cyan-900 text-cyan-400 px-2 py-1 rounded glow-text">Automated</span>
+                        </div>
+                        <div class="h-8 border-l-2 border-slate-700 ml-4 border-dashed"></div>
+                        <div class="flex justify-between items-center text-white">
+                            <span>3. Acme Challenge</span>
+                            <span
+                                class="text-xs bg-cyan-900 text-cyan-400 px-2 py-1 rounded glow-text">Verification</span>
+                        </div>
+                        <div class="h-8 border-l-2 border-slate-700 ml-4 border-dashed"></div>
+                        <div class="flex justify-between items-center text-white">
+                            <span>4. Panel Install</span>
+                            <span
+                                class="text-xs bg-green-900 text-green-400 px-2 py-1 rounded glow-text">Deployment</span>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-white" id="f3-title">Multi-Panel Ready</h3>
-                    <p class="text-slate-400 leading-relaxed" id="f3-desc">Native support for X-UI, Marzban, Hiddify,
-                        Pasargad, and Amnezia. Automatic path detection.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Developer Profile Card (GAvatar Based) -->
-    <section class="py-24 bg-slate-900/50">
+    <section class="py-24">
         <div class="container mx-auto px-6">
             <h2 class="text-center text-sm font-bold text-cyan-400 tracking-widest uppercase mb-12">Meet The Developer
             </h2>
@@ -339,101 +359,175 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800 py-12 text-center text-slate-500 text-sm">
-        <p>&copy; 2025 TawanaSSL Project. Released under MIT License.</p>
-    </footer>
+    <!-- STAR Request Footer -->
+    <section id="github-star"
+        class="py-24 bg-gradient-to-b from-slate-900 to-black text-center border-t border-slate-800">
+        <div class="container mx-auto px-6">
+            <div class="max-w-2xl mx-auto">
+                <div
+                    class="w-20 h-20 bg-yellow-400/10 rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce">
+                    <svg class="w-10 h-10 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" />
+                    </svg>
+                </div>
+                <h2 class="text-4xl font-bold text-white mb-6" id="star-title">Support The Project</h2>
+                <p class="text-slate-400 text-lg mb-8 leading-relaxed" id="star-desc">
+                    TawanaSSL is open-source and free forever. If this tool helped you secure your servers and fight
+                    censorship, please consider giving it a Star on GitHub. It helps more people find it.
+                </p>
+                <a href="https://github.com/tawanamohammadi/TawanaSSL-AutoWildcard" target="_blank"
+                    class="inline-flex items-center gap-3 px-8 py-4 bg-white text-black font-bold text-lg rounded-full hover:scale-105 transition-transform shadow-lg shadow-white/20">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                    </svg>
+                    <span id="star-btn-text">Star on GitHub</span>
+                </a>
+            </div>
+        </div>
+        </footer>
 
-    <!-- Scripts -->
-    <script>
-        // Language Data
-        const translations = {
-            en: {
-                title: "Secure Your World",
-                desc: "The most advanced <b>Automated Wildcard SSL</b> suite. Zero-config DNS. Censorship Resistant.",
-                copy: "Click to copy • Requires Root • Ubuntu / Debian",
-                btnStar: "Star on GitHub",
-                btnExplore: "Explore Features",
-                f1t: "Auto DNS Sync", f1d: "Detects your server IP automatically and updates Cloudflare A-records.",
-                f2t: "Universal Wildcard", f2d: "One certificate (*.domain.com) for all your panels and sub-nodes.",
-                f3t: "Multi-Panel Ready", f3d: "Native support for X-UI, Marzban, Hiddify, Pasargad, and Amnezia.",
-                dir: "ltr"
-            },
-            fa: {
-                title: "دنیای خود را امن کنید",
-                desc: "پیشرفته‌ترین سوئیت <b>مدیریت خودکار SSL</b> در جهان. بدون تنظیمات پیچیده DNS. مقاوم در برابر سانسور.",
-                copy: "برای کپی کلیک کنید • نیاز به دسترسی Root • اوبونتو / دبیان",
-                btnStar: "حمایت در گیت‌هاب",
-                btnExplore: "مشاهده ویژگی‌ها",
-                f1t: "همگام‌سازی خودکار DNS", f1d: "به طور خودکار آی‌پی سرور را شناسایی کرده و در کلودفلر تنظیم می‌کند.",
-                f2t: "وایلدکارد جهانی", f2d: "یک گواهینامه (*.domain.com) برای تمام پنل‌ها و نودهای شما.",
-                f3t: "پشتیبانی از تمام پنل‌ها", f3d: "سازگاری کامل با مرزبان، X-UI، هیدیفای و امنیزیا.",
-                dir: "rtl"
-            },
-            ru: {
-                title: "Защитите свой мир",
-                desc: "Самый продвинутый набор <b>Automated Wildcard SSL</b>. Авто-DNS. Устойчивость к цензуре.",
-                copy: "Нажмите, чтобы скопировать • Требуется Root • Ubuntu / Debian",
-                btnStar: "Звезда на GitHub",
-                btnExplore: "Изучить функции",
-                f1t: "Авто-синхронизация DNS", f1d: "Автоматически определяет IP сервера и обновляет Cloudflare.",
-                f2t: "Универсальный Wildcard", f2d: "Один сертификат (*.domain.com) для всех узлов и панелей.",
-                f3t: "Мульти-панель", f3d: "Встроенная поддержка X-UI, Marzban, Hiddify и Amnezia.",
-                dir: "ltr"
-            },
-            zh: {
-                title: "保护您的网络世界",
-                desc: "全球最先进的 <b>自动化通配符 SSL</b> 套件。零配置 DNS。抗审查设计。",
-                copy: "点击复制命令 • 需要 Root 权限 • Ubuntu / Debian",
-                btnStar: "在 GitHub 上点赞",
-                btnExplore: "探索功能",
-                f1t: "自动 DNS 同步", f1d: "自动检测服务器 IP 并更新 Cloudflare A 记录。",
-                f2t: "通用通配符证书", f2d: "一个证书 (*.domain.com) 适用于所有面板和子节点。",
-                f3t: "多面板支持", f3d: "原生支持 X-UI, Marzban, Hiddify, Pasargad 和 Amnezia。",
-                dir: "ltr"
+        <div class="py-6 text-center text-slate-700 text-sm">
+            &copy; 2025 TawanaSSL Project. Released under MIT License.
+        </div>
+
+        <!-- Scripts -->
+        <script>
+            // Language Definition
+            const translations = {
+                en: {
+                    title: "Secure Your World",
+                    desc: "The most advanced <b>Automated Wildcard SSL</b> suite. Zero-config DNS. Resistance against Censorship.",
+                    copy: "Click to copy • Requires Root • Ubuntu / Debian",
+                    btnStar: "Star on GitHub",
+                    btnExplore: "Explore Features",
+                    probTitle: "Why is SSL Hard?",
+                    probDesc1: "In restricted networks (Iran, China, Russia), obtaining a valid SSL certificate is a nightmare. Port 80 is often blocked, DNS propagation is slow.",
+                    probDesc2: "Usually, you have to manually login to Cloudflare, create an A-record, wait for it, and run scripts. It's tedious.",
+                    solTitle: "The Tawana Solution",
+                    s1: "Takes your Cloudflare API Key securely.",
+                    s2: "Automatically checks your server's Public IP.",
+                    s3: "Injects the correct DNS A-record via API instantly.",
+                    s4: "Issues a robust Wildcard Certificate (*.site.com).",
+                    s5: "Installs it directly into X-UI, Marzban, etc.",
+                    starTitle: "Support The Project",
+                    starDesc: "TawanaSSL is open-source and free forever. If this tool helped you secure your servers and fight censorship, please consider giving it a Star on GitHub.",
+                    starBtn: "Star on GitHub",
+                    dir: "ltr"
+                },
+                fa: {
+                    title: "دنیای خود را امن کنید",
+                    desc: "پیشرفته‌ترین سوئیت <b>مدیریت خودکار SSL</b> در جهان. بدون تنظیمات دستی DNS. مقاوم در برابر فیلترینگ.",
+                    copy: "برای کپی کلیک کنید • نیاز به دسترسی Root • اوبونتو / دبیان",
+                    btnStar: "حمایت در گیت‌هاب",
+                    btnExplore: "مشاهده ویژگی‌ها",
+                    probTitle: "چرا گرفتن SSL سخت است؟",
+                    probDesc1: "در شبکه‌های محدود شده (ایران، چین)، گرفتن گواهینامه معتبر SSL کابوس است. پورت ۸۰ بسته است و دی‌ان‌اس‌ها کند هستند.",
+                    probDesc2: "معمولاً باید دستی وارد کلودفلر شوید، رکورد بسازید، صبر کنید و اسکریپت بزنید. این کار خسته‌کننده و پراشتباه است.",
+                    solTitle: "راه حل توانا اس‌اس‌ال",
+                    s1: "کلید API کلودفلر شما را به صورت امن دریافت می‌کند.",
+                    s2: "به طور خودکار آی‌پی پابلیک سرور را شناسایی می‌کند.",
+                    s3: "رکورد DNS صحیح را بلافاصله از طریق API تزریق می‌کند.",
+                    s4: "یک گواهینامه Wildcard قوی (*.site.com) صادر می‌کند.",
+                    s5: "مستقیماً در پنل‌های X-UI و مرزبان نصب و فعال می‌کند.",
+                    starTitle: "از پروژه حمایت کنید",
+                    starDesc: "پروژه TawanaSSL همیشه رایگان و متن‌باز باقی می‌ماند. اگر این ابزار به شما در مبارزه با سانسور کمک کرد، لطفاً با دادن ستاره (Star) در گیت‌هاب از ما حمایت کنید.",
+                    starBtn: "ستاره دادن در گیت‌هاب",
+                    dir: "rtl"
+                },
+                ru: {
+                    title: "Защитите свой мир",
+                    desc: "Самый продвинутый набор <b>Automated Wildcard SSL</b>. Авто-DNS. Устойчивость к цензуре.",
+                    copy: "Нажмите для копирования • Root • Ubuntu / Debian",
+                    btnStar: "Звезда на GitHub",
+                    btnExplore: "Функции",
+                    probTitle: "Почему SSL это сложно?",
+                    probDesc1: "В сетях с ограничениями (Россия, Иран) получение SSL — это кошмар. Порт 80 часто заблокирован.",
+                    probDesc2: "Обычно приходится вручную настраивать Cloudflare и ждать. Это долго и неудобно.",
+                    solTitle: "Решение TawanaSSL",
+                    s1: "Безопасно использует ваш Cloudflare API Key.",
+                    s2: "Автоматически определяет Public IP сервера.",
+                    s3: "Мгновенно создает правильную DNS-запись через API.",
+                    s4: "Выпускает надежный Wildcard сертификат.",
+                    s5: "Устанавливает прямо в X-UI, Marzban и Amnezia.",
+                    starTitle: "Поддержите проект",
+                    starDesc: "TawanaSSL — бесплатный проект с открытым кодом. Если он помог вам, пожалуйста, поставьте звезду на GitHub.",
+                    starBtn: "Поставить звезду",
+                    dir: "ltr"
+                },
+                zh: {
+                    title: "保护您的网络世界",
+                    desc: "全球最先进的 <b>自动化通配符 SSL</b> 套件。零配置 DNS。抗审查设计。",
+                    copy: "点击复制命令 • 需要 Root 权限 • Ubuntu / Debian",
+                    btnStar: "GitHub 点赞",
+                    btnExplore: "探索功能",
+                    probTitle: "为什么 SSL 很难?",
+                    probDesc1: "在受限网络环境（中国、伊朗）中，获取 SSL 证书是一场噩梦。80端口常被封锁。",
+                    probDesc2: "通常您需要手动配置 Cloudflare 并等待 DNS 生效，这非常繁琐易错。",
+                    solTitle: "Tawana 解决方案",
+                    s1: "安全获取您的 Cloudflare API 密钥。",
+                    s2: "自动检测服务器公网 IP。",
+                    s3: "通过 API 瞬间注入正确的 DNS 记录。",
+                    s4: "签发强大的通配符证书 (*.site.com)。",
+                    s5: "直接安装到 X-UI, Marzban 等面板。",
+                    starTitle: "支持本项目",
+                    starDesc: "TawanaSSL 永远开源免费。如果这个工具帮助了您，请在 GitHub 上为我们要一颗星星 (Star)。",
+                    starBtn: "前往 GitHub 点赞",
+                    dir: "ltr"
+                }
+            };
+
+            function setLang(lang) {
+                const data = translations[lang];
+
+                // Basics
+                document.getElementById('txt-title').innerHTML = data.title;
+                document.getElementById('txt-desc').innerHTML = data.desc;
+                document.getElementById('txt-copy').innerText = data.copy;
+                document.getElementById('btn-star').innerText = data.btnStar;
+                document.getElementById('btn-explore').innerText = data.btnExplore;
+
+                // Problem & Solution
+                document.getElementById('prob-title').innerText = data.probTitle;
+                document.getElementById('prob-desc-1').innerText = data.probDesc1;
+                document.getElementById('prob-desc-2').innerText = data.probDesc2;
+                document.getElementById('sol-title').innerText = data.solTitle;
+                document.getElementById('sol-1').innerText = data.s1;
+                document.getElementById('sol-2').innerText = data.s2;
+                document.getElementById('sol-3').innerText = data.s3;
+                document.getElementById('sol-4').innerText = data.s4;
+                document.getElementById('sol-5').innerText = data.s5;
+
+                // Star Section
+                document.getElementById('star-title').innerText = data.starTitle;
+                document.getElementById('star-desc').innerText = data.starDesc;
+                document.getElementById('star-btn-text').innerText = data.starBtn;
+
+                document.documentElement.setAttribute('dir', data.dir);
+
+                if (lang === 'fa') {
+                    document.body.classList.add('font-[Vazirmatn]');
+                    document.body.classList.remove('font-sans');
+                } else {
+                    document.body.classList.remove('font-[Vazirmatn]');
+                    document.body.classList.add('font-sans');
+                }
             }
-        };
 
-        function setLang(lang) {
-            const data = translations[lang];
-            document.getElementById('txt-title').innerHTML = data.title;
-            document.getElementById('txt-desc').innerHTML = data.desc;
-            document.getElementById('txt-copy').innerText = data.copy;
-            document.getElementById('btn-star').innerText = data.btnStar;
-            document.getElementById('btn-explore').innerText = data.btnExplore;
-
-            document.getElementById('f1-title').innerText = data.f1t;
-            document.getElementById('f1-desc').innerText = data.f1d;
-            document.getElementById('f2-title').innerText = data.f2t;
-            document.getElementById('f2-desc').innerText = data.f2d;
-            document.getElementById('f3-title').innerText = data.f3t;
-            document.getElementById('f3-desc').innerText = data.f3d;
-
-            document.documentElement.setAttribute('dir', data.dir);
-
-            // Font update for Persian
-            if (lang === 'fa') {
-                document.body.classList.add('font-[Vazirmatn]');
-                document.body.classList.remove('font-sans');
-            } else {
-                document.body.classList.remove('font-[Vazirmatn]');
-                document.body.classList.add('font-sans');
+            function copyCommand() {
+                const cmd = document.getElementById('install-cmd').innerText.trim();
+                navigator.clipboard.writeText(cmd);
+                const copyTxt = document.getElementById('txt-copy');
+                const original = copyTxt.innerText;
+                copyTxt.innerText = "COPIED! ✅";
+                copyTxt.classList.add('text-green-400', 'font-bold');
+                setTimeout(() => {
+                    copyTxt.innerText = original;
+                    copyTxt.classList.remove('text-green-400', 'font-bold');
+                }, 2000);
             }
-        }
-
-        function copyCommand() {
-            const cmd = document.getElementById('install-cmd').innerText.trim();
-            navigator.clipboard.writeText(cmd);
-            const copyTxt = document.getElementById('txt-copy');
-            const original = copyTxt.innerText;
-            copyTxt.innerText = "COPIED! ✅";
-            copyTxt.classList.add('text-green-400', 'font-bold');
-            setTimeout(() => {
-                copyTxt.innerText = original;
-                copyTxt.classList.remove('text-green-400', 'font-bold');
-            }, 2000);
-        }
-    </script>
+        </script>
 </body>
 
 </html>
